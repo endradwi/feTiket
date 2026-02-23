@@ -18,12 +18,6 @@ function Register() {
         </CardHeader>
         <CardContent className={"space-y-4 py-2"}>
           <Field>
-            <FieldLabel>Name</FieldLabel>
-            <FieldContent>
-              <Input placeholder="John Doe" />
-            </FieldContent>
-          </Field>
-          <Field>
             <FieldLabel>Email</FieldLabel>
             <FieldContent>
               <Input placeholder="john@example.com" />
@@ -31,12 +25,6 @@ function Register() {
           </Field>
           <Field>
             <FieldLabel>Password</FieldLabel>
-            <FieldContent>
-              <Input variant={"password"} />
-            </FieldContent>
-          </Field>
-          <Field>
-            <FieldLabel>Confirm Password</FieldLabel>
             <FieldContent>
               <Input variant={"password"} />
             </FieldContent>
@@ -51,6 +39,15 @@ function Register() {
             <Link to="/login" className="text-sm text-primary hover:underline">
               Login
             </Link>
+          </div>
+           <div className="flex items-center justify-center pt-2 gap-2">
+            <Separator className="flex-1"/>
+            <span className="text-muted-foreground text-sm">Or</span>
+            <Separator className="flex-1"/>
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <Button>Login with Google</Button>
+            <Button>Login with Facebook</Button>
           </div>
         </CardContent>
       </Card>
