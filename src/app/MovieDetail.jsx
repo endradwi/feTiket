@@ -1,35 +1,66 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
 import { CalendarDays, Clock, MapPin, ChevronDown } from 'lucide-react'
+import { useDispatch } from 'react-redux'
+import { setBookingDetails } from '../store/bookingSlice'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { DUMMY_DATA } from '../data/dummy'
 import MainLayout from '../layout/main'
 
 export default function MovieDetail() {
-  useParams() // In a real app we'd use id here
-  // In a real app, we would fetch the exact movie using the ID. 
-  // For now, we use the single detailed mock object.
-  const movie = DUMMY_DATA.movieDetails
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { id } = useParams()
+  
+  // Find the movie from any available list based on ID from URL
+  const selectedMovieFromList = 
+    DUMMY_DATA.movieList.find(m => m.id === parseInt(id)) || 
+    DUMMY_DATA.nowShowingMovies.find(m => m.id === parseInt(id)) ||
+    DUMMY_DATA.upcomingMovies.find(m => m.id === parseInt(id))
+  
+  // Merge with movieDetails to get the full UI fields while keeping specific movie data
+  const movie = {
+    ...DUMMY_DATA.movieDetails,
+    ...(selectedMovieFromList || {}),
+    // Map image property from list to poster and banner
+    posterImage: selectedMovieFromList?.image || DUMMY_DATA.movieDetails.posterImage,
+    bannerImage: selectedMovieFromList?.image || DUMMY_DATA.movieDetails.bannerImage,
+    // Ensure genres is always an array
+    genres: selectedMovieFromList?.genres || DUMMY_DATA.movieDetails.genres
+  }
+  
   const cinemas = DUMMY_DATA.cinemas
   
   const [selectedCinema, setSelectedCinema] = useState(null)
   
-  const [date, setDate] = useState('21/07/28')
-  const [time, setTime] = useState('08 : 30 AM')
-  const [location, setLocation] = useState('Purwokerto')
+  const [selectedDate, setSelectedDate] = useState('')
+  const [selectedTime, setSelectedTime] = useState('')
+  const [selectedLocation, setSelectedLocation] = useState('')
   
   const [filteredCinemas, setFilteredCinemas] = useState(cinemas)
 
   // Initial filter sync
   useEffect(() => {
-    handleFilter()
+    // Set initial values for selects if they are not already set
+    if (!selectedDate) setSelectedDate('21/07/28');
+    if (!selectedTime) setSelectedTime('08 : 30 AM');
+    if (!selectedLocation) setSelectedLocation('Purwokerto');
+    
+    // Only run handleFilter if selectedLocation has a value
+    if (selectedLocation) {
+      handleFilter();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLocation]); // Re-run when selectedLocation changes
+
+  useEffect(() => {
+   window.scrollTo(0, 0); 
   }, [])
 
   const handleFilter = () => {
     // filter cinemas by location
-    const result = cinemas.filter(c => c.location.toLowerCase() === location.toLowerCase())
+    const result = cinemas.filter(c => c.location.toLowerCase() === selectedLocation.toLowerCase())
     setFilteredCinemas(result.length > 0 ? result : [])
     setSelectedCinema(null)
   }
@@ -111,10 +142,11 @@ export default function MovieDetail() {
                       <CalendarDays className="w-4 h-4" />
                     </div>
                     <select 
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
                       className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
+                      <option value="">Select Date</option>
                       <option value="21/07/28">21/07/28</option>
                       <option value="22/07/28">22/07/28</option>
                       <option value="23/07/28">23/07/28</option>
@@ -132,10 +164,11 @@ export default function MovieDetail() {
                       <Clock className="w-4 h-4" />
                     </div>
                     <select 
-                      value={time}
-                      onChange={(e) => setTime(e.target.value)}
+                      value={selectedTime}
+                      onChange={(e) => setSelectedTime(e.target.value)}
                       className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
+                      <option value="">Select Time</option>
                       <option value="08 : 30 AM">08 : 30 AM</option>
                       <option value="10 : 30 AM">10 : 30 AM</option>
                       <option value="12 : 30 PM">12 : 30 PM</option>
@@ -153,10 +186,11 @@ export default function MovieDetail() {
                       <MapPin className="w-4 h-4" />
                     </div>
                     <select 
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
+                      value={selectedLocation}
+                      onChange={(e) => setSelectedLocation(e.target.value)}
                       className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
+                      <option value="">Select Location</option>
                       <option value="Purwokerto">Purwokerto</option>
                       <option value="Jakarta">Jakarta</option>
                       <option value="Bandung">Bandung</option>
@@ -217,14 +251,24 @@ export default function MovieDetail() {
 
               {/* Book Now Button */}
               <div className="flex justify-center max-w-sm mx-auto">
-                <Link to={`/order/${movie.id}?cinema=${selectedCinema}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&loc=${encodeURIComponent(location)}`} className={`w-full ${!selectedCinema ? 'pointer-events-none' : ''}`}>
-                  <Button 
-                    className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                    disabled={!selectedCinema}
-                  >
-                    Book Now
-                  </Button>
-                </Link>
+                <Button 
+                  onClick={() => {
+                    const c = cinemas.find(ci => ci.id === selectedCinema)
+                    if (selectedDate && selectedTime && c) {
+                      dispatch(setBookingDetails({
+                        movie: movie,
+                        cinema: c,
+                        date: selectedDate,
+                        time: selectedTime
+                      }))
+                      navigate(`/order/${movie.id}`)
+                    }
+                  }}
+                  className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!selectedCinema || !selectedDate || !selectedTime}
+                >
+                  Book Now
+                </Button>
               </div>
 
             </div>

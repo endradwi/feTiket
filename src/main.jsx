@@ -1,3 +1,4 @@
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import './index.css'
@@ -12,6 +13,8 @@ import Order from './app/Order'
 import Payment from './app/Payment'
 import Profile from './app/Profile'
 import Ticket from './app/Ticket'
+import { Provider } from 'react-redux'
+import { store } from './store'
 
 const router = createBrowserRouter([
   {
@@ -56,8 +59,10 @@ const router = createBrowserRouter([
   },
 ])
 
-const root = createRoot(document.getElementById('root'))
-
-root.render(
-  <RouterProvider router={router} />
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  </StrictMode>,
 )

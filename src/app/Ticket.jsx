@@ -1,29 +1,24 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router'
-import { Download } from 'lucide-react'
+import { Download, Printer } from 'lucide-react'
+import { useSelector } from 'react-redux'
 import { QRCodeSVG } from 'qrcode.react'
 import { Button } from '../components/ui/Button'
 import MainLayout from '../layout/main'
-import { DUMMY_DATA } from '../data/dummy'
 
 export default function Ticket() {
   const navigate = useNavigate()
-  
-  // Dummy data for this page since we don't have real fetch yet
-  const movie = DUMMY_DATA.movieDetails
-  
-  // Mock booking data
-  const bookingData = {
-    movieTitle: movie.title,
-    date: '07 Jul',
-    time: '2:00pm',
-    category: 'PG-13',
-    count: '3 pcs',
-    seats: 'C4, C5, C6',
-    total: '$30.00',
-    bookingId: 'BK-12321328913829724'
-  }
+  const booking = useSelector((state) => state.booking)
 
+  // Redirect to home if no booking data is present
+  React.useEffect(() => {
+    if (!booking.bookingId) {
+      navigate('/')
+    }
+  }, [booking.bookingId, navigate])
+
+  const { movie, date, time, seats, totalPrice, bookingId } = booking
+  
   return (
     <MainLayout>
       <div className="bg-slate-50 min-h-[calc(100vh-80px)] md:py-16 md:px-8 flex items-center justify-center">
@@ -59,7 +54,7 @@ export default function Ticket() {
                 {/* Top Part of Ticket (QR Code) */}
                 <div className="bg-white rounded-t-2xl p-8 flex justify-center items-center relative shadow-sm border-b-2 border-dashed border-slate-200">
                    <QRCodeSVG 
-                      value={bookingData.bookingId} 
+                      value={bookingId || ""} 
                       size={160}
                       level={"L"}
                       includeMargin={false}
@@ -74,35 +69,35 @@ export default function Ticket() {
                 {/* Middle Part of Ticket (Details) */}
                 <div className="bg-white rounded-b-2xl p-8 relative shadow-sm mb-8">
                    <div className="grid grid-cols-2 gap-y-6 gap-x-4 mb-6">
-                      <div>
-                         <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Movie</span>
-                         <span className="block text-sm font-bold text-slate-900 truncate max-w-[120px]">{bookingData.movieTitle}</span>
-                      </div>
-                      <div>
-                         <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Category</span>
-                         <span className="block text-sm font-bold text-slate-900">{bookingData.category}</span>
-                      </div>
-                      <div>
-                         <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Date</span>
-                         <span className="block text-sm font-bold text-slate-900">{bookingData.date}</span>
-                      </div>
-                      <div>
-                         <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Time</span>
-                         <span className="block text-sm font-bold text-slate-900">{bookingData.time}</span>
-                      </div>
+                      <div className="flex-1">
+                        <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Movie</span>
+                        <p className="font-bold text-slate-800 text-sm">{movie?.title}</p>
+                     </div>
+                     <div className="flex-1">
+                        <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Category</span>
+                        <p className="font-bold text-slate-800 text-sm">{movie?.genre?.join(', ')}</p>
+                     </div>
+                      <div className="flex-1">
+                        <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Date</span>
+                        <p className="font-bold text-slate-800 text-sm">{date}</p>
+                     </div>
+                     <div className="flex-1">
+                        <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Time</span>
+                        <p className="font-bold text-slate-800 text-sm">{time}</p>
+                     </div>
                       <div>
                          <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Count</span>
-                         <span className="block text-sm font-bold text-slate-900">{bookingData.count}</span>
+                         <span className="block text-sm font-bold text-slate-900">{seats?.length} pcs</span>
                       </div>
                       <div>
                          <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Seats</span>
-                         <span className="block text-sm font-bold text-slate-900 truncate">{bookingData.seats}</span>
+                         <span className="block text-sm font-bold text-slate-900 truncate">{seats?.join(', ')}</span>
                       </div>
                    </div>
 
-                   <div className="border border-slate-100 rounded-xl p-4 flex items-center justify-between">
+                   <div className="flex justify-between items-center border-t border-slate-100 pt-6 mt-2">
                       <span className="text-sm font-semibold text-slate-900">Total</span>
-                      <span className="font-bold text-slate-900">{bookingData.total}</span>
+                      <span className="font-bold text-slate-900">${totalPrice?.toFixed(2)}</span>
                    </div>
                 </div>
 

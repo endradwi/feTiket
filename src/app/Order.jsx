@@ -1,21 +1,31 @@
-import React, { useState } from 'react'
-import { Link, useLocation } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { Check } from 'lucide-react'
+import { useSelector, useDispatch } from 'react-redux'
+import { setSeats } from '../store/bookingSlice'
 import { Button } from '../components/ui/Button'
 import MainLayout from '../layout/main'
 import { DUMMY_DATA } from '../data/dummy'
+import React, { useState } from 'react'
 
 export default function Order() {
-  useLocation() // Added to keep import from failing if unused, we'll parse it later if needed
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const booking = useSelector((state) => state.booking)
   
-  // Dummy data for this page since we don't have real fetch yet
-  const movie = DUMMY_DATA.movieDetails
-  const cinema = DUMMY_DATA.cinemas[2] // CineOne21
-  
-  // State for seats
-  const [selectedSeats, setSelectedSeats] = useState([])
+  // Redirect to home if no booking data is present in redux
+  React.useEffect(() => {
+    if (!booking.movie || !booking.cinema) {
+      navigate('/')
+    }
+  }, [booking.movie, booking.cinema, navigate])
+
+  const [selectedSeats, setSelectedSeats] = useState(booking.seats || [])
   // each item is { id: 'A1', type: 'single' | 'love-nest' }
   const [dragStartSeat, setDragStartSeat] = useState(null)
+  
+  const movie = booking.movie || {}
+  const cinema = booking.cinema || {}
+  const ticketPrice = 10
   
   const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
   // Let's hardcode some sold seats
@@ -331,14 +341,19 @@ export default function Order() {
                </div>
                
                <div className="w-full">
-                 <Link to={selectedSeats.length > 0 ? "/payment" : "#"} className={selectedSeats.length === 0 ? "pointer-events-none" : ""}>
-                   <Button 
-                     disabled={selectedSeats.length === 0}
-                     className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                   >
-                     Checkout now
-                   </Button>
-                 </Link>
+                 <Button 
+                   onClick={() => {
+                     dispatch(setSeats({
+                       seats: selectedSeats,
+                       totalPrice: selectedSeats.length * ticketPrice
+                     }))
+                     navigate('/payment')
+                   }}
+                   disabled={selectedSeats.length === 0}
+                   className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                 >
+                   Checkout now
+                 </Button>
                </div>
             </div>
           </div>

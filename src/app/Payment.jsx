@@ -1,19 +1,47 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Check } from 'lucide-react'
+import { useSelector, useDispatch } from 'react-redux'
+import { setPersonalInfo, setPaymentMethod, setBookingId } from '../store/bookingSlice'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import MainLayout from '../layout/main'
-import { DUMMY_DATA } from '../data/dummy'
 
 export default function Payment() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const booking = useSelector((state) => state.booking)
+
+  // Redirect to home if no booking data is present
+  React.useEffect(() => {
+    if (!booking.movie || !booking.cinema || booking.seats.length === 0) {
+      navigate('/')
+    }
+  }, [booking, navigate])
+
   const [showModal, setShowModal] = useState(false)
-  const [selectedPayment, setSelectedPayment] = useState(null)
+  const [selectedPayment, setSelectedPayment] = useState(booking.paymentMethod || null)
   
+  const [formData, setFormData] = useState({
+    firstName: booking.personalInfo.firstName || 'Jonas',
+    lastName: booking.personalInfo.lastName || 'El Rodriguez',
+    email: booking.personalInfo.email || 'jonasrodr123@gmail.com',
+    phoneCode: booking.personalInfo.phoneCode || '+62',
+    phoneNumber: booking.personalInfo.phoneNumber || '81445687121'
+  })
+
   const handlePay = () => {
+    dispatch(setPersonalInfo(formData))
+    dispatch(setPaymentMethod(selectedPayment))
+    
+    // Generate a mock booking ID
+    const mockId = Math.random().toString().slice(2, 18)
+    dispatch(setBookingId(mockId))
+
     setShowModal(true)
   }
+
+  const { movie, cinema, date, time, seats, totalPrice, bookingId } = booking
 
   const paymentMethods = [
     { id: 'gpay', logo: 'https://via.placeholder.com/80x30?text=G+Pay' }, // Replace with real logos
@@ -74,27 +102,27 @@ export default function Payment() {
             <div className="space-y-4 mb-10">
                <div className="flex flex-col md:flex-row md:items-center justify-between text-sm gap-2">
                  <span className="text-slate-500 font-semibold uppercase tracking-wider text-xs">Date & Time</span>
-                 <span className="font-semibold text-slate-900">Tuesday, 07 July 2026 at 02:00pm</span>
+                 <span className="font-semibold text-slate-900">{date} at {time}</span>
                </div>
                <hr className="border-slate-100" />
                <div className="flex flex-col md:flex-row md:items-center justify-between text-sm gap-2">
                  <span className="text-slate-500 font-semibold uppercase tracking-wider text-xs">Movie Title</span>
-                 <span className="font-semibold text-slate-900">Spider-Man: Homecoming</span>
+                 <span className="font-semibold text-slate-900">{movie?.title}</span>
                </div>
                <hr className="border-slate-100" />
                <div className="flex flex-col md:flex-row md:items-center justify-between text-sm gap-2">
                  <span className="text-slate-500 font-semibold uppercase tracking-wider text-xs">Cinema Name</span>
-                 <span className="font-semibold text-slate-900">CineOne21 Cinema</span>
+                 <span className="font-semibold text-slate-900">{cinema?.name}</span>
                </div>
                <hr className="border-slate-100" />
                <div className="flex flex-col md:flex-row md:items-center justify-between text-sm gap-2">
                  <span className="text-slate-500 font-semibold uppercase tracking-wider text-xs">Number Of Tickets</span>
-                 <span className="font-semibold text-slate-900">3 pieces</span>
+                 <span className="font-semibold text-slate-900">{seats?.length || 0} pieces</span>
                </div>
                <hr className="border-slate-100" />
                <div className="flex flex-col md:flex-row md:items-center justify-between text-sm gap-2">
                  <span className="text-slate-500 font-semibold uppercase tracking-wider text-xs">Total Payment</span>
-                 <span className="font-bold text-[#003049] text-lg">$30,00</span>
+                 <span className="font-bold text-[#003049] text-lg">${totalPrice?.toFixed(2)}</span>
                </div>
             </div>
 
@@ -103,30 +131,46 @@ export default function Payment() {
             <div className="space-y-5 mb-10">
                <div>
                   <label className="block text-sm font-semibold text-slate-500 mb-2">Full Name</label>
-                  <Input 
-                     defaultValue="Jonas El Rodriguez" 
-                     className="w-full h-12 bg-white border-slate-200 rounded-xl"
-                  />
+                  <div className="flex gap-4">
+                     <Input 
+                        value={formData.firstName} 
+                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                        className="w-full h-12 bg-white border-slate-200 rounded-xl"
+                        placeholder="First Name"
+                     />
+                     <Input 
+                        value={formData.lastName} 
+                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                        className="w-full h-12 bg-white border-slate-200 rounded-xl"
+                        placeholder="Last Name"
+                     />
+                  </div>
                </div>
                <div>
                   <label className="block text-sm font-semibold text-slate-500 mb-2">Email</label>
                   <Input 
                      type="email"
-                     defaultValue="jonasrodr123@gmail.com" 
+                     value={formData.email} 
+                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                      className="w-full h-12 bg-white border-slate-200 rounded-xl"
                   />
                </div>
                <div>
                   <label className="block text-sm font-semibold text-slate-500 mb-2">Phone Number</label>
                   <div className="flex gap-4">
-                     <select className="h-12 w-[100px] bg-white border border-slate-200 rounded-xl px-4 text-slate-900 font-medium outline-none focus:ring-2 focus:ring-[#003049]/20">
+                     <select 
+                        value={formData.phoneCode}
+                        onChange={(e) => setFormData({...formData, phoneCode: e.target.value})}
+                        className="h-12 w-[100px] bg-white border border-slate-200 rounded-xl px-4 text-slate-900 font-medium outline-none focus:ring-2 focus:ring-[#003049]/20"
+                     >
                         <option>+62</option>
                         <option>+1</option>
                         <option>+44</option>
                      </select>
                      <Input 
                         type="tel"
-                        defaultValue="81445687121" 
+                        value={formData.phoneNumber} 
+                        onChange={(e) => setFormData({...formData, phoneNumber: e.target.value})}
                         className="flex-1 h-12 bg-white border-slate-200 rounded-xl"
                      />
                   </div>
@@ -153,7 +197,8 @@ export default function Payment() {
 
             <Button 
                onClick={handlePay}
-               className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30"
+               disabled={!selectedPayment}
+               className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                Pay your order
             </Button>
@@ -172,13 +217,13 @@ export default function Payment() {
                   <div className="flex flex-col gap-1">
                      <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider">No. Rekening Virtual</span>
                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-slate-900 text-lg">12321328913829724</span>
+                        <span className="font-bold text-slate-900 text-lg">{bookingId}</span>
                         <Button variant="outline" className="border-[#003049] text-[#003049] hover:bg-[#003049]/10 h-8 rounded-lg text-xs font-bold px-4">Copy</Button>
                      </div>
                   </div>
                   <div className="flex items-center justify-between border-b border-slate-100 pb-6">
                      <span className="text-sm text-slate-500 font-semibold">Total Payment</span>
-                     <span className="font-bold text-[#003049] text-xl">$30</span>
+                     <span className="font-bold text-[#003049] text-xl">${totalPrice?.toFixed(2)}</span>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed text-center">
                      Pay this payment bill before it is due, <span className="text-red-500 font-bold">on June 23, 2023</span>. If the bill has not been paid by the specified time, it will be forfeited.
