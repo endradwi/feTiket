@@ -113,7 +113,7 @@ export default function MovieDetail() {
                     <select 
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#5F2EEA]/20"
+                      className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
                       <option value="21/07/28">21/07/28</option>
                       <option value="22/07/28">22/07/28</option>
@@ -134,7 +134,7 @@ export default function MovieDetail() {
                     <select 
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#5F2EEA]/20"
+                      className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
                       <option value="08 : 30 AM">08 : 30 AM</option>
                       <option value="10 : 30 AM">10 : 30 AM</option>
@@ -155,7 +155,7 @@ export default function MovieDetail() {
                     <select 
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
-                      className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#5F2EEA]/20"
+                      className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
                       <option value="Purwokerto">Purwokerto</option>
                       <option value="Jakarta">Jakarta</option>
@@ -169,7 +169,7 @@ export default function MovieDetail() {
                 
                 <Button 
                   onClick={handleFilter}
-                  className="w-full md:w-auto h-12 px-8 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-medium rounded-xl"
+                  className="w-full md:w-auto h-12 px-8 bg-[#003049] hover:bg-[#003049]/90 text-white font-medium rounded-xl"
                 >
                   Filter
                 </Button>
@@ -177,7 +177,7 @@ export default function MovieDetail() {
 
               <div className="flex items-center gap-3 mb-6">
                 <h4 className="font-bold text-slate-900">Choose Cinema</h4>
-                <span className="text-[#5F2EEA] text-xs font-semibold bg-[#5F2EEA]/10 px-3 py-1 rounded-full">{filteredCinemas.length} Result</span>
+                <span className="text-[#003049] text-xs font-semibold bg-[#003049]/10 px-3 py-1 rounded-full">{filteredCinemas.length} Result</span>
               </div>
 
               {/* Cinemas Grid */}
@@ -189,8 +189,8 @@ export default function MovieDetail() {
                     onClick={() => setSelectedCinema(cinema.id)}
                     className={`cursor-pointer rounded-2xl border flex items-center justify-center p-6 h-24 transition-all ${
                       selectedCinema === cinema.id 
-                        ? 'bg-[#5F2EEA] border-[#5F2EEA] shadow-md' 
-                        : 'bg-white border-slate-200 hover:border-[#5F2EEA]/50 hover:bg-slate-50'
+                        ? 'bg-[#003049] border-[#003049] shadow-md' 
+                        : 'bg-white border-slate-200 hover:border-[#003049]/50 hover:bg-slate-50'
                     }`}
                   >
                     <img 
@@ -209,17 +209,17 @@ export default function MovieDetail() {
 
               {/* Pagination */}
               <div className="flex items-center justify-center gap-2 mb-12">
-                <Button size="icon" className="w-10 h-10 rounded-full bg-[#5F2EEA] text-white hover:bg-[#5F2EEA]/90">1</Button>
-                <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#5F2EEA] hover:border-[#5F2EEA] hover:bg-white bg-white">2</Button>
-                <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#5F2EEA] hover:border-[#5F2EEA] hover:bg-white bg-white">3</Button>
-                <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#5F2EEA] hover:border-[#5F2EEA] hover:bg-white bg-white">4</Button>
+                <Button size="icon" className="w-10 h-10 rounded-full bg-[#003049] text-white hover:bg-[#003049]/90">1</Button>
+                <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#003049] hover:border-[#003049] hover:bg-white bg-white">2</Button>
+                <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#003049] hover:border-[#003049] hover:bg-white bg-white">3</Button>
+                <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#003049] hover:border-[#003049] hover:bg-white bg-white">4</Button>
               </div>
 
               {/* Book Now Button */}
               <div className="flex justify-center max-w-sm mx-auto">
                 <Link to={`/order/${movie.id}?cinema=${selectedCinema}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&loc=${encodeURIComponent(location)}`} className={`w-full ${!selectedCinema ? 'pointer-events-none' : ''}`}>
                   <Button 
-                    className="w-full h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#5F2EEA]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={!selectedCinema}
                   >
                     Book Now

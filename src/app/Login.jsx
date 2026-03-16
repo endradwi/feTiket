@@ -34,12 +34,12 @@ function Login() {
             </Field>
             
             <div className="flex items-center justify-end w-full pt-1 pb-2">
-              <Link to="/forgot-password" className="text-[13px] font-semibold text-[#5F2EEA] hover:underline hover:text-[#5F2EEA]/80">
+              <Link to="/forgot-password" className="text-[13px] font-semibold text-[#003049] hover:underline hover:text-[#003049]/80">
                 Forgot your password?
               </Link>
             </div>
             
-            <Button className="w-full bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white h-12 text-base font-medium">
+            <Button className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white h-12 text-base font-medium">
               Login
             </Button>
           </div>

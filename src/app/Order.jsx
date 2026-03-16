@@ -90,7 +90,7 @@ export default function Order() {
           {/* Stepper */}
           <div className="flex items-center justify-center mb-12">
             <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold mb-2 shadow-sm">
+              <div className="w-10 h-10 rounded-full bg-[#F77F00] text-white flex items-center justify-center font-bold mb-2 shadow-sm">
                 <Check className="w-5 h-5" />
               </div>
               <span className="text-xs font-semibold text-slate-500">Dates And Time</span>
@@ -103,7 +103,7 @@ export default function Order() {
             </div>
 
             <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-[#5F2EEA] text-white flex items-center justify-center font-bold mb-2 shadow-md shadow-[#5F2EEA]/30">
+              <div className="w-10 h-10 rounded-full bg-[#003049] text-white flex items-center justify-center font-bold mb-2 shadow-md shadow-[#003049]/30">
                 2
               </div>
               <span className="text-xs font-semibold text-slate-900">Seat</span>
@@ -141,7 +141,7 @@ export default function Order() {
                     <p className="text-sm font-semibold text-slate-900">Reguler • 11:00 PM</p>
                   </div>
                 </div>
-                <Button className="bg-slate-50 border border-slate-200 text-[#5F2EEA] hover:bg-[#5F2EEA] hover:border-[#5F2EEA] hover:text-white rounded-xl font-bold px-8 shadow-sm">Change</Button>
+                <Button className="bg-slate-50 border border-slate-200 text-[#003049] hover:bg-[#003049] hover:border-[#003049] hover:text-white rounded-xl font-bold px-8 shadow-sm">Change</Button>
               </div>
 
               {/* Choose Seat Area */}
@@ -184,13 +184,13 @@ export default function Order() {
                              bgClass = "bg-slate-500 border-slate-500 opacity-60 pointer-events-none"
                           } else if (selectedObj) {
                              if (selectedObj.type === 'love-nest') {
-                               bgClass = "bg-[#F1468E] border-[#F1468E] shadow-[#F1468E]/30 shadow-md" 
+                               bgClass = "bg-[#D62828] border-[#D62828] shadow-[#D62828]/30 shadow-md" 
                                widthClass = "w-[72px]"
                              } else {
-                               bgClass = "bg-[#5F2EEA] border-[#5F2EEA] shadow-[#5F2EEA]/30 shadow-md" 
+                               bgClass = "bg-[#003049] border-[#003049] shadow-[#003049]/30 shadow-md" 
                              }
                           } else {
-                             bgClass = "hover:bg-[#5F2EEA]/20 hover:border-[#5F2EEA]/50 bg-slate-100 border-slate-200"
+                             bgClass = "hover:bg-[#003049]/20 hover:border-[#003049]/50 bg-slate-100 border-slate-200"
                           }
 
                           return (
@@ -226,13 +226,13 @@ export default function Order() {
                              bgClass = "bg-slate-500 border-slate-500 opacity-60 pointer-events-none"
                           } else if (selectedObj) {
                              if (selectedObj.type === 'love-nest') {
-                               bgClass = "bg-[#F1468E] border-[#F1468E] shadow-[#F1468E]/30 shadow-md" 
+                               bgClass = "bg-[#D62828] border-[#D62828] shadow-[#D62828]/30 shadow-md" 
                                widthClass = "w-[72px]"
                              } else {
-                               bgClass = "bg-[#5F2EEA] border-[#5F2EEA] shadow-[#5F2EEA]/30 shadow-md" 
+                               bgClass = "bg-[#003049] border-[#003049] shadow-[#003049]/30 shadow-md" 
                              }
                           } else {
-                             bgClass = "hover:bg-[#5F2EEA]/20 hover:border-[#5F2EEA]/50 bg-slate-100 border-slate-200"
+                             bgClass = "hover:bg-[#003049]/20 hover:border-[#003049]/50 bg-slate-100 border-slate-200"
                           }
 
                           return (
@@ -274,11 +274,11 @@ export default function Order() {
                       <span className="text-sm text-slate-500 font-semibold">Available</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded bg-[#5F2EEA] border border-[#5F2EEA] shadow-md shadow-[#5F2EEA]/20"></div>
+                      <div className="w-6 h-6 rounded bg-[#003049] border border-[#003049] shadow-md shadow-[#003049]/20"></div>
                       <span className="text-sm text-slate-500 font-semibold">Selected</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-12 h-6 rounded bg-[#F1468E] border border-[#F1468E] shadow-md shadow-[#F1468E]/20"></div>
+                      <div className="w-12 h-6 rounded bg-[#D62828] border border-[#D62828] shadow-md shadow-[#D62828]/20"></div>
                       <span className="text-sm text-slate-500 font-semibold">Love nest</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -324,7 +324,7 @@ export default function Order() {
 
                  <div className="pt-6 border-t border-slate-100 flex justify-between items-center mb-2">
                    <span className="font-bold text-lg text-slate-900">Total Payment</span>
-                   <span className="text-2xl font-bold text-[#5F2EEA]">
+                   <span className="text-2xl font-bold text-[#003049]">
                      ${getTotalPayment()}
                    </span>
                  </div>
@@ -334,7 +334,7 @@ export default function Order() {
                  <Link to={selectedSeats.length > 0 ? "/payment" : "#"} className={selectedSeats.length === 0 ? "pointer-events-none" : ""}>
                    <Button 
                      disabled={selectedSeats.length === 0}
-                     className="w-full h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#5F2EEA]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                     className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
                    >
                      Checkout now
                    </Button>

@@ -16,7 +16,7 @@ function Register() {
           {/* Stepper */}
           <div className="flex items-center justify-between pb-2">
             <div className="flex flex-col items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5F2EEA] text-white text-sm font-medium">1</div>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#003049] text-white text-sm font-medium">1</div>
               <span className="text-[11px] text-muted-foreground font-medium">Fill Form</span>
             </div>
             <div className="h-[1px] flex-1 border-dashed border-t-2 border-muted-foreground/30 mx-2 mb-[22px]" />
@@ -46,17 +46,17 @@ function Register() {
             </Field>
             
             <div className="flex items-center gap-3 pt-1 pb-3">
-              <Checkbox id="terms" className="data-[state=checked]:bg-[#5F2EEA] data-[state=checked]:border-[#5F2EEA]" />
+              <Checkbox id="terms" className="data-[state=checked]:bg-[#003049] data-[state=checked]:border-[#003049]" />
               <Label htmlFor="terms" className="text-[13px] font-normal text-muted-foreground cursor-pointer">I agree to terms & conditions</Label>
             </div>
             
-            <Button className="w-full bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white h-12 text-base font-medium">
+            <Button className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white h-12 text-base font-medium">
               Join For Free Now
             </Button>
             
             <div className="flex items-center justify-center pt-2">
               <span className="text-sm text-foreground font-medium mr-[6px]">Already have an account?</span>
-              <Link to="/login" className="text-sm font-semibold text-[#5F2EEA] hover:underline hover:text-[#5F2EEA]/80">
+              <Link to="/login" className="text-sm font-semibold text-[#003049] hover:underline hover:text-[#003049]/80">
                 Log In
               </Link>
             </div>

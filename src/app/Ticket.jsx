@@ -108,10 +108,10 @@ export default function Ticket() {
 
                 {/* Actions */}
                 <div className="space-y-4">
-                   <Button variant="outline" className="w-full h-12 border-slate-300 text-[#5F2EEA] hover:bg-[#5F2EEA]/5 rounded-xl font-bold gap-2">
+                   <Button variant="outline" className="w-full h-12 border-slate-300 text-[#003049] hover:bg-[#003049]/5 rounded-xl font-bold gap-2">
                       <Download className="w-4 h-4" /> Download
                    </Button>
-                   <Button onClick={() => navigate('/')} className="w-full h-12 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-xl font-bold shadow-lg shadow-[#5F2EEA]/20">
+                   <Button onClick={() => navigate('/')} className="w-full h-12 bg-[#003049] hover:bg-[#003049]/90 text-white rounded-xl font-bold shadow-lg shadow-[#003049]/20">
                       Done
                    </Button>
                 </div>

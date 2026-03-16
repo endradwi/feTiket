@@ -25,7 +25,7 @@ export default function Movie() {
           style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=2025&auto=format&fit=crop")', filter: 'brightness(0.4)' }}
         ></div>
         <div className="relative z-10 max-w-7xl mx-auto px-8 w-full text-white">
-          <p className="text-[#5F2EEA] text-xs font-bold tracking-wider uppercase mb-4">List Movie of the Week</p>
+          <p className="text-[#003049] text-xs font-bold tracking-wider uppercase mb-4">List Movie of the Week</p>
           <h1 className="text-3xl md:text-5xl font-bold leading-tight max-w-2xl">
             Experience the Magic of Cinema: Book Your Tickets Today
           </h1>
@@ -54,7 +54,7 @@ export default function Movie() {
                   onClick={() => setActiveFilter(genre)}
                   variant={activeFilter === genre ? 'solid' : 'outline'} 
                   className={activeFilter === genre 
-                    ? "bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-xl h-10 px-6" 
+                    ? "bg-[#003049] hover:bg-[#003049]/90 text-white rounded-xl h-10 px-6" 
                     : "bg-white text-slate-500 border-slate-200 hover:bg-slate-100 rounded-xl h-10 px-6"}
                 >
                   {genre}
@@ -74,14 +74,14 @@ export default function Movie() {
               <div key={`${movie.id}-${index}`} className="group relative rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex flex-col cursor-pointer transition-shadow hover:shadow-md">
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img src={movie.image} alt={movie.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                  <div className="absolute top-4 left-4 bg-[#5F2EEA] text-white text-xs font-bold px-3 py-1 rounded-md opacity-0 transition-opacity">
+                  <div className="absolute top-4 left-4 bg-[#003049] text-white text-xs font-bold px-3 py-1 rounded-md opacity-0 transition-opacity">
                     RECOMMENDED
                   </div>
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-6">
                     <Link to={`/movie/${movie.id}`} className="w-full">
                       <Button variant="outline" className="w-full text-white border-white hover:bg-white hover:text-black rounded-lg">Details</Button>
                     </Link>
-                    <Button className="w-full bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-lg">Buy Ticket</Button>
+                    <Button className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white rounded-lg">Buy Ticket</Button>
                   </div>
                 </div>
                 <div className="p-5 text-center flex flex-col flex-1 justify-between">
@@ -103,11 +103,11 @@ export default function Movie() {
           
           {/* Pagination */}
           <div className="mt-16 flex items-center justify-center gap-2">
-            <Button size="icon" className="w-10 h-10 rounded-full bg-[#5F2EEA] text-white hover:bg-[#5F2EEA]/90">1</Button>
-            <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#5F2EEA] hover:border-[#5F2EEA] hover:bg-white bg-white">2</Button>
-            <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#5F2EEA] hover:border-[#5F2EEA] hover:bg-white bg-white">3</Button>
-            <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#5F2EEA] hover:border-[#5F2EEA] hover:bg-white bg-white">4</Button>
-            <Button size="icon" className="w-10 h-10 rounded-full bg-[#5F2EEA] text-white hover:bg-[#5F2EEA]/90 ml-2"><ArrowRight className="w-4 h-4" /></Button>
+            <Button size="icon" className="w-10 h-10 rounded-full bg-[#003049] text-white hover:bg-[#003049]/90">1</Button>
+            <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#003049] hover:border-[#003049] hover:bg-white bg-white">2</Button>
+            <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#003049] hover:border-[#003049] hover:bg-white bg-white">3</Button>
+            <Button size="icon" variant="outline" className="w-10 h-10 rounded-full border-slate-200 text-slate-500 hover:text-[#003049] hover:border-[#003049] hover:bg-white bg-white">4</Button>
+            <Button size="icon" className="w-10 h-10 rounded-full bg-[#003049] text-white hover:bg-[#003049]/90 ml-2"><ArrowRight className="w-4 h-4" /></Button>
           </div>
         </div>
       </section>

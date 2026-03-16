@@ -87,7 +87,7 @@ export default function Profile() {
 
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
                <span className="block text-sm font-semibold text-slate-700 mb-4">Loyalty Points</span>
-               <div className="bg-gradient-to-r from-[#5F2EEA] to-[#8C6EEA] w-full h-28 rounded-2xl relative overflow-hidden flex flex-col justify-center px-6 shadow-md shadow-[#5F2EEA]/20">
+               <div className="bg-gradient-to-r from-[#003049] to-[#8C6EEA] w-full h-28 rounded-2xl relative overflow-hidden flex flex-col justify-center px-6 shadow-md shadow-[#003049]/20">
                   <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-white/10 rounded-full"></div>
                   <div className="absolute right-4 bottom-2 text-4xl">🌟</div>
                   <div className="text-white">
@@ -99,7 +99,7 @@ export default function Profile() {
                   180 points become a master
                </p>
                <div className="w-full bg-slate-100 rounded-full h-1 mt-3">
-                  <div className="bg-[#5F2EEA] h-1 rounded-full w-[60%]"></div>
+                  <div className="bg-[#003049] h-1 rounded-full w-[60%]"></div>
                </div>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function Profile() {
                    >
                       Account Settings
                       {activeTab === 'accountSettings' && (
-                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#5F2EEA]"></div>
+                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#003049]"></div>
                       )}
                    </button>
                    <button 
@@ -129,7 +129,7 @@ export default function Profile() {
                    >
                       Order History
                       {activeTab === 'orderHistory' && (
-                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#5F2EEA]"></div>
+                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#003049]"></div>
                       )}
                    </button>
                 </div>
@@ -211,7 +211,7 @@ export default function Profile() {
                             </div>
                          </div>
 
-                         <Button className="w-full md:w-auto px-12 h-12 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-xl shadow-lg shadow-[#5F2EEA]/30 transition-all">
+                         <Button className="w-full md:w-auto px-12 h-12 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-xl shadow-lg shadow-[#003049]/30 transition-all">
                             Update changes
                          </Button>
                       </div>
@@ -231,7 +231,7 @@ export default function Profile() {
                                         <h4 className="text-lg md:text-xl font-bold text-slate-900">{order.movieTitle}</h4>
                                      </div>
                                      <div>
-                                        <h4 className="text-2xl md:text-3xl font-bold text-[#5F2EEA] opacity-30 italic">{order.cinemaName}</h4>
+                                        <h4 className="text-2xl md:text-3xl font-bold text-[#003049] opacity-30 italic">{order.cinemaName}</h4>
                                      </div>
                                   </div>
 
@@ -240,19 +240,19 @@ export default function Profile() {
                                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                      <div className="flex items-center gap-4">
                                         <span className={`px-4 py-2 rounded-lg text-xs font-bold ${
-                                           order.status === 'active' ? 'bg-[#00BA88]/10 text-[#00BA88]' : 'bg-[#6E7191]/10 text-[#6E7191]'
+                                           order.status === 'active' ? 'bg-[#FCBF49]/10 text-[#FCBF49]' : 'bg-[#6E7191]/10 text-[#6E7191]'
                                         }`}>
                                            {order.status === 'active' ? 'Ticket in active' : 'Ticket used'}
                                         </span>
                                         <span className={`px-4 py-2 rounded-lg text-xs font-bold ${
-                                           order.paymentStatus === 'Not Paid' ? 'bg-[#ED2E7E]/10 text-[#ED2E7E]' : 'bg-[#6E7191]/10 text-[#6E7191]'
+                                           order.paymentStatus === 'Not Paid' ? 'bg-[#D62828]/10 text-[#D62828]' : 'bg-[#6E7191]/10 text-[#6E7191]'
                                         }`}>
                                            {order.paymentStatus}
                                         </span>
                                      </div>
                                      <button 
                                         onClick={() => toggleOrderDetails(order.id)}
-                                        className="flex items-center gap-2 text-slate-400 hover:text-[#5F2EEA] font-semibold text-sm transition-colors mx-auto md:mx-0"
+                                        className="flex items-center gap-2 text-slate-400 hover:text-[#003049] font-semibold text-sm transition-colors mx-auto md:mx-0"
                                      >
                                         Show Details {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                                      </button>
@@ -270,17 +270,17 @@ export default function Profile() {
                                                  <span className="text-sm text-slate-500 font-medium">No. Rekening Virtual</span>
                                                  <div className="flex items-center gap-4">
                                                     <span className="font-bold text-slate-900">12321328913829724</span>
-                                                    <Button variant="outline" className="border-[#5F2EEA] text-[#5F2EEA] hover:bg-[#5F2EEA]/10 h-8 px-4 py-0 rounded-lg text-xs font-bold">Copy</Button>
+                                                    <Button variant="outline" className="border-[#003049] text-[#003049] hover:bg-[#003049]/10 h-8 px-4 py-0 rounded-lg text-xs font-bold">Copy</Button>
                                                  </div>
                                               </div>
                                               <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
                                                  <span className="text-sm text-slate-500 font-medium">Total Payment</span>
-                                                 <span className="font-bold text-[#5F2EEA] text-lg">$30</span>
+                                                 <span className="font-bold text-[#003049] text-lg">$30</span>
                                               </div>
                                               <p className="text-xs text-slate-500 text-left leading-relaxed">
                                                  Pay this payment bill before it is due, <span className="text-red-500 font-bold">on June 23, 2023</span>. If the bill has not been paid by the specified time, it will be forfeited.
                                               </p>
-                                              <Button className="w-full md:w-[200px] h-12 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-xl shadow-lg shadow-[#5F2EEA]/30">
+                                              <Button className="w-full md:w-[200px] h-12 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-xl shadow-lg shadow-[#003049]/30">
                                                  Check Payment
                                               </Button>
                                            </div>
