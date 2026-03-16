@@ -13,6 +13,8 @@ import Order from './app/Order'
 import Payment from './app/Payment'
 import Profile from './app/Profile'
 import Ticket from './app/Ticket'
+import AdminDashboard from './app/AdminDashboard'
+import AdminMovies from './app/AdminMovies'
 import { Provider } from 'react-redux'
 import { store } from './store'
 
@@ -56,6 +58,14 @@ const router = createBrowserRouter([
   {
     path: "/profile",
     element: <Profile />,
+  },
+  {
+    path: "/admin",
+    element: <AdminDashboard />,
+  },
+  {
+    path: "/admin/movies",
+    element: <AdminMovies />,
   },
 ])
 
