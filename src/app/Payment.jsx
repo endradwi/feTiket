@@ -187,12 +187,12 @@ export default function Payment() {
                
                <div className="space-y-3">
                   <Button 
-                     onClick={() => navigate('/')} 
+                     onClick={() => navigate('/ticket')} 
                      className="w-full h-12 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-xl shadow-lg shadow-[#5F2EEA]/30"
                   >
                      Check Payment
                   </Button>
-                  <Button 
+                  <Button  
                      variant="ghost" 
                      onClick={() => setShowModal(false)}
                      className="w-full h-12 text-[#5F2EEA] font-bold hover:bg-slate-50 rounded-xl"

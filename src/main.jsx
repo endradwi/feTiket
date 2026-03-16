@@ -10,6 +10,7 @@ import Movie from './app/Movie'
 import MovieDetail from './app/MovieDetail'
 import Order from './app/Order'
 import Payment from './app/Payment'
+import Ticket from './app/Ticket'
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
   {
     path: "/payment",
     element: <Payment />,
+  },
+  {
+    path: "/ticket",
+    element: <Ticket />,
   },
 ])
 
