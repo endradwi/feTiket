@@ -7,6 +7,7 @@ import Login from './app/Login'
 import Register from './app/Register'
 import ForgotPassword from './app/ForgotPassword'
 import Movie from './app/Movie'
+import MovieDetail from './app/MovieDetail'
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/movie",
     element: <Movie />,
+  },
+  {
+    path: "/movie/:id",
+    element: <MovieDetail />,
   },
   {
     path: "/login",

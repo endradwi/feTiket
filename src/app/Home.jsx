@@ -91,7 +91,9 @@ function Home() {
                     RECOMMENDED
                   </div>
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-6">
-                    <Button variant="outline" className="w-full text-white border-white hover:bg-white hover:text-black rounded-lg">Details</Button>
+                    <Link to={`/movie/${movie.id}`} className="w-full">
+                      <Button variant="outline" className="w-full text-white border-white hover:bg-white hover:text-black rounded-lg">Details</Button>
+                    </Link>
                     <Button className="w-full bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-lg">Buy Ticket</Button>
                   </div>
                 </div>

@@ -92,4 +92,22 @@ export const DUMMY_DATA = {
       logo: "https://via.placeholder.com/100x40?text=hiflix",
     },
   ],
+  movieDetails: {
+    id: 1,
+    title: "Spider-Man: Homecoming",
+    bannerImage: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=2025&auto=format&fit=crop",
+    posterImage: "https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=500&auto=format&fit=crop",
+    genres: ["Action", "Adventure"],
+    releaseDate: "June 28, 2017",
+    directedBy: "Jon Watts",
+    duration: "2 hours 13 minutes",
+    casts: "Tom Holland, Michael Keaton, Robert Downey Jr",
+    synopsis: "Thrilled by his experience with the Avengers, Peter returns home, where he lives with his Aunt May, under the watchful eye of his new mentor Tony Stark. Peter tries to fall back into his normal daily routine - distracted by thoughts of proving himself to be more than just your friendly neighborhood Spider-Man - but when the Vulture emerges as a new villain, everything that Peter holds most important will be threatened.",
+  },
+  cinemas: [
+    { id: 1, name: "ebv.id", logo: "https://via.placeholder.com/100x40?text=ebv.id", price: 30000, location: "Purwokerto" },
+    { id: 2, name: "hiflix", logo: "https://via.placeholder.com/100x40?text=hiflix", price: 40000, location: "Jakarta" },
+    { id: 3, name: "CineOne21", logo: "https://via.placeholder.com/100x40?text=CineOne21", price: 50000, location: "Bandung" },
+    { id: 4, name: "ebv.id", logo: "https://via.placeholder.com/100x40?text=ebv.id", price: 30000, location: "Purwokerto" },
+  ],
 }

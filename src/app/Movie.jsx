@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Search, ArrowRight } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { Input } from '../components/ui/Input'
 import { DUMMY_DATA } from '../data/dummy'
 import MainLayout from '../layout/main'
+import { Link } from 'react-router'
 
 export default function Movie() {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [activeFilter, setActiveFilter] = useState("All")
+  
+  const filteredMovies = DUMMY_DATA.movieList.filter(movie => {
+    const matchesSearch = movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesFilter = activeFilter === "All" ? true : movie.genres.includes(activeFilter)
+    return matchesSearch && matchesFilter
+  })
+
   return (
     <MainLayout>
       {/* Hero Section */}
@@ -29,18 +39,27 @@ export default function Movie() {
             <p className="text-sm font-semibold mb-2">Cari Event</p>
             <Input 
               startContent={<Search className="w-4 h-4" />} 
-              placeholder="New Born Expert" 
+              placeholder="Search Movie..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-white h-12 rounded-xl border-slate-200" 
             />
           </div>
           <div className="w-full md:w-auto">
             <p className="text-sm font-semibold mb-2">Filter</p>
             <div className="flex flex-wrap items-center gap-2">
-              <Button className="bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-xl h-10 px-6">All</Button>
-              <Button variant="outline" className="bg-white text-slate-500 border-slate-200 hover:bg-slate-100 rounded-xl h-10 px-6">Horror</Button>
-              <Button variant="outline" className="bg-white text-slate-500 border-slate-200 hover:bg-slate-100 rounded-xl h-10 px-6">Romantic</Button>
-              <Button variant="outline" className="bg-white text-slate-500 border-slate-200 hover:bg-slate-100 rounded-xl h-10 px-6">Adventure</Button>
-              <Button variant="outline" className="bg-white text-slate-500 border-slate-200 hover:bg-slate-100 rounded-xl h-10 px-6">Sci-Fi</Button>
+              {['All', 'Horror', 'Romantic', 'Adventure', 'Sci-Fi'].map((genre) => (
+                <Button 
+                  key={genre}
+                  onClick={() => setActiveFilter(genre)}
+                  variant={activeFilter === genre ? 'solid' : 'outline'} 
+                  className={activeFilter === genre 
+                    ? "bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-xl h-10 px-6" 
+                    : "bg-white text-slate-500 border-slate-200 hover:bg-slate-100 rounded-xl h-10 px-6"}
+                >
+                  {genre}
+                </Button>
+              ))}
             </div>
           </div>
         </div>
@@ -50,7 +69,8 @@ export default function Movie() {
       <section className="px-8 py-10 bg-slate-50">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {DUMMY_DATA.movieList.map((movie, index) => (
+            {filteredMovies.length > 0 ? (
+              filteredMovies.map((movie, index) => (
               <div key={`${movie.id}-${index}`} className="group relative rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex flex-col cursor-pointer transition-shadow hover:shadow-md">
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img src={movie.image} alt={movie.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
@@ -58,7 +78,9 @@ export default function Movie() {
                     RECOMMENDED
                   </div>
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-6">
-                    <Button variant="outline" className="w-full text-white border-white hover:bg-white hover:text-black rounded-lg">Details</Button>
+                    <Link to={`/movie/${movie.id}`} className="w-full">
+                      <Button variant="outline" className="w-full text-white border-white hover:bg-white hover:text-black rounded-lg">Details</Button>
+                    </Link>
                     <Button className="w-full bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-lg">Buy Ticket</Button>
                   </div>
                 </div>
@@ -71,7 +93,12 @@ export default function Movie() {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+            ) : (
+              <div className="col-span-full py-10 text-center text-slate-500 font-medium">
+                No movies found matching your criteria.
+              </div>
+            )}
           </div>
           
           {/* Pagination */}
