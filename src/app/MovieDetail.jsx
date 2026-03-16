@@ -217,12 +217,14 @@ export default function MovieDetail() {
 
               {/* Book Now Button */}
               <div className="flex justify-center max-w-sm mx-auto">
-                <Button 
-                  className="w-full h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#5F2EEA]/30 disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={!selectedCinema}
-                >
-                  Book Now
-                </Button>
+                <Link to={`/order/${movie.id}?cinema=${selectedCinema}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&loc=${encodeURIComponent(location)}`} className={`w-full ${!selectedCinema ? 'pointer-events-none' : ''}`}>
+                  <Button 
+                    className="w-full h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#5F2EEA]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={!selectedCinema}
+                  >
+                    Book Now
+                  </Button>
+                </Link>
               </div>
 
             </div>

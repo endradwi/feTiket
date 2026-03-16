@@ -8,6 +8,7 @@ import Register from './app/Register'
 import ForgotPassword from './app/ForgotPassword'
 import Movie from './app/Movie'
 import MovieDetail from './app/MovieDetail'
+import Order from './app/Order'
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/order/:id",
+    element: <Order />,
   },
 ])
 
