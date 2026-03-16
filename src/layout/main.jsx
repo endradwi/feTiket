@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router'
-import { Instagram, Twitter, Facebook, Youtube, ChevronDown, Search } from 'lucide-react'
+import { Instagram, Twitter, Facebook, Youtube } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { DUMMY_DATA } from '../data/dummy'
 
@@ -19,16 +19,12 @@ export default function MainLayout({ children }) {
           <Link to="/movie" className={`${location.pathname === '/movie' ? 'text-[#5F2EEA] border-b-2 border-[#5F2EEA]' : 'text-muted-foreground hover:text-[#5F2EEA]'} py-1 transition-colors`}>Movie</Link>
           <Link to="#" className="text-muted-foreground hover:text-[#5F2EEA] py-1 transition-colors">Buy Ticket</Link>
         </div>
-        <div className="flex items-center gap-6">
-          <div className="hidden md:flex items-center gap-2 cursor-pointer hover:text-[#5F2EEA]">
-            <span className="text-sm font-semibold">Location</span>
-            <ChevronDown className="w-4 h-4" />
-          </div>
-          <Search className="w-5 h-5 cursor-pointer hover:text-[#5F2EEA]" />
-          <Link to="/profile">
-            <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-transparent hover:border-[#5F2EEA] transition-all">
-              <img src="https://i.pravatar.cc/150?img=11" alt="Profile" className="w-full h-full object-cover" />
-            </div>
+        <div className="flex items-center gap-4">
+          <Link to="/login">
+            <Button variant="outline" className="w-[100px] text-[#5F2EEA] border-[#5F2EEA] hover:bg-[#5F2EEA]/10 font-semibold rounded-lg">Sign In</Button>
+          </Link>
+          <Link to="/register">
+            <Button className="w-[100px] bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-semibold rounded-lg">Sign Up</Button>
           </Link>
         </div>
       </nav>
@@ -61,7 +57,7 @@ export default function MainLayout({ children }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="space-y-6">
               <img src="/logo.png" alt="Tickitz" className="h-10 text-[#5F2EEA]" style={{filter: 'brightness(0) saturate(100%) invert(24%) sepia(50%) saturate(6015%) hue-rotate(251deg) brightness(85%) contrast(98%)'}} />
-              <p className="text-muted-foreground text-sm leading-loose max-w-xs">
+              <p className="text-sm font-medium text-slate-500 mb-8 max-w-xs leading-relaxed">
                 Stop waiting in line. Buy tickets conveniently, watch movies quietly.
               </p>
             </div>
