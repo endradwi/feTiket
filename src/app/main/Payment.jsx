@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router'
 import { Check } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setPersonalInfo, setPaymentMethod, setBookingId } from '../../store/bookingSlice'
-import { Button } from '../../components/ui/Button'
-import { Input } from '../../components/ui/Input'
+import { Button } from '../../shared/components/ui/Button'
+import { Input } from '../../shared/components/ui/Input'
 import MainLayout from '../../layout/main'
 
 export default function Payment() {

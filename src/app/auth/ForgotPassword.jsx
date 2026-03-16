@@ -1,8 +1,8 @@
 import AuthLayout from "../../layout/auth"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/Card"
-import { Button } from "../../components/ui/Button"
-import { Input } from "../../components/ui/Input"
-import { Field, FieldContent, FieldLabel } from "../../components/ui/Field"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../shared/components/ui/Card"
+import { Button } from "../../shared/components/ui/Button"
+import { Input } from "../../shared/components/ui/Input"
+import { Field, FieldContent, FieldLabel } from "../../shared/components/ui/Field"
 import { Link } from "react-router"
 import { ArrowLeft } from "lucide-react"
 

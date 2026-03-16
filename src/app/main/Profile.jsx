@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Plus, Eye, EyeOff, ChevronDown, ChevronUp } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
-import { Button } from '../../components/ui/Button'
-import { Input } from '../../components/ui/Input'
+import { Button } from '../../shared/components/ui/Button'
+import { Input } from '../../shared/components/ui/Input'
 import MainLayout from '../../layout/main'
 
 export default function Profile() {

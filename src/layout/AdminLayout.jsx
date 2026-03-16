@@ -1,8 +1,8 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router'
 import { Search, ChevronDown } from 'lucide-react'
-import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
+import { Button } from '../shared/components/ui/Button'
+import { Input } from '../shared/components/ui/Input'
 
 export default function AdminLayout({ children }) {
   const location = useLocation()

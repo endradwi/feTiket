@@ -1,11 +1,11 @@
 import AuthLayout from "../../layout/auth"
-import { Card, CardContent } from "../../components/ui/Card"
-import { Button } from "../../components/ui/Button"
-import { Input } from "../../components/ui/Input"
-import { Field, FieldContent, FieldLabel } from "../../components/ui/Field"
-import { Separator } from "../../components/ui/Separator"
-import { Label } from "../../components/ui/Label"
-import { Checkbox } from "../../components/ui/Checkbox"
+import { Card, CardContent } from "../../shared/components/ui/Card"
+import { Button } from "../../shared/components/ui/Button"
+import { Input } from "../../shared/components/ui/Input"
+import { Field, FieldContent, FieldLabel } from "../../shared/components/ui/Field"
+import { Separator } from "../../shared/components/ui/Separator"
+import { Label } from "../../shared/components/ui/Label"
+import { Checkbox } from "../../shared/components/ui/Checkbox"
 import { Link } from "react-router"
 
 function Register() {

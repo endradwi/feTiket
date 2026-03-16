@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import { Download, Printer } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { QRCodeSVG } from 'qrcode.react'
-import { Button } from '../../components/ui/Button'
+import { Button } from '../../shared/components/ui/Button'
 import MainLayout from '../../layout/main'
 
 export default function Ticket() {

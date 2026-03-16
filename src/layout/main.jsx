@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router'
 import { Instagram, Twitter, Facebook, Youtube } from 'lucide-react'
-import { Button } from '../components/ui/Button'
+import { Button } from '../shared/components/ui/Button'
 import { DUMMY_DATA } from '../data/dummy'
 
 export default function MainLayout({ children }) {

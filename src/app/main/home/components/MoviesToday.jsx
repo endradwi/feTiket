@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 import { ArrowRight } from 'lucide-react'
-import { Button } from '../../../../components/ui/Button'
+import { Button } from '../../../../shared/components/ui/Button'
 import { DUMMY_DATA } from '../../../../data/dummy'
 
 const MoviesToday = () => {
@@ -22,7 +22,7 @@ const MoviesToday = () => {
                 </div>
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-6">
                   <Link to={`/movie/${movie.id}`} className="w-full">
-                    <Button variant="outline" className="w-full text-white border-white hover:bg-white hover:text-black rounded-lg">Details</Button>
+                    <Button variant="outline" className="w-full text-white border-white bg-transparent hover:bg-white hover:text-black rounded-lg">Details</Button>
                   </Link>
                   <Button className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white rounded-lg">Buy Ticket</Button>
                 </div>

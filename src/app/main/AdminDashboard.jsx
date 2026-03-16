@@ -1,6 +1,6 @@
 import React from 'react'
 import { ChevronDown } from 'lucide-react'
-import { Button } from '../../components/ui/Button'
+import { Button } from '../../shared/components/ui/Button'
 import AdminLayout from '../../layout/AdminLayout'
 
 export default function AdminDashboard() {

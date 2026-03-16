@@ -1,6 +1,6 @@
 import React from 'react'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { Button } from '../../../../components/ui/Button'
+import { Button } from '../../../../shared/components/ui/Button'
 import { DUMMY_DATA } from '../../../../data/dummy'
 
 const UpcomingMovies = () => {

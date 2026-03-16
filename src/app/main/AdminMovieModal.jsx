@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { X, Upload, Calendar, Clock, Plus } from 'lucide-react'
-import { Button } from '../../components/ui/Button'
-import { Input } from '../../components/ui/Input'
+import { Button } from '../../shared/components/ui/Button'
+import { Input } from '../../shared/components/ui/Input'
 
 export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie }) {
   const [formData, setFormData] = useState({

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ChevronDown, Edit, Trash2, Eye, Plus } from 'lucide-react'
-import { Button } from '../../components/ui/Button'
+import { Button } from '../../shared/components/ui/Button'
 import AdminLayout from '../../layout/AdminLayout'
 import AdminMovieModal from './AdminMovieModal'
 import { DUMMY_DATA } from '../../data/dummy'
