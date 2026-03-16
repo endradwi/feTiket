@@ -1,14 +1,21 @@
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router'
 import './index.css'
+import { createBrowserRouter } from 'react-router'
+import Home from './app/Home'
 import Login from './app/Login'
 import Register from './app/Register'
 import ForgotPassword from './app/ForgotPassword'
-import { createBrowserRouter } from 'react-router'
+import Movie from './app/Movie'
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />,
+    element: <Home />,
+  },
+  {
+    path: "/movie",
+    element: <Movie />,
   },
   {
     path: "/login",
