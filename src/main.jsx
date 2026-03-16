@@ -9,6 +9,7 @@ import ForgotPassword from './app/ForgotPassword'
 import Movie from './app/Movie'
 import MovieDetail from './app/MovieDetail'
 import Order from './app/Order'
+import Payment from './app/Payment'
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
   {
     path: "/order/:id",
     element: <Order />,
+  },
+  {
+    path: "/payment",
+    element: <Payment />,
   },
 ])
 

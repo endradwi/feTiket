@@ -330,7 +330,16 @@ export default function Order() {
                  </div>
                </div>
                
-               <Button className="w-full h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#5F2EEA]/30">Checkout now</Button>
+               <div className="w-full">
+                 <Link to={selectedSeats.length > 0 ? "/payment" : "#"} className={selectedSeats.length === 0 ? "pointer-events-none" : ""}>
+                   <Button 
+                     disabled={selectedSeats.length === 0}
+                     className="w-full h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#5F2EEA]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                   >
+                     Checkout now
+                   </Button>
+                 </Link>
+               </div>
             </div>
           </div>
         </div>
