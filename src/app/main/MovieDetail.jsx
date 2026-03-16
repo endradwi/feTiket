@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { CalendarDays, Clock, MapPin, ChevronDown } from 'lucide-react'
 import { useDispatch } from 'react-redux'
-import { setBookingDetails } from '../store/bookingSlice'
-import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
-import { DUMMY_DATA } from '../data/dummy'
-import MainLayout from '../layout/main'
+import { setBookingDetails } from '../../store/bookingSlice'
+import { Button } from '../../components/ui/Button'
+import { Input } from '../../components/ui/Input'
+import { DUMMY_DATA } from '../../data/dummy'
+import MainLayout from '../../layout/main'
 
 export default function MovieDetail() {
   const navigate = useNavigate()
@@ -75,7 +75,7 @@ export default function MovieDetail() {
           className="w-full h-full object-cover opacity-80"
         />
         {/* Gradients to fade smoothly into content below */}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-white to-transparent"></div>
       </section>
 
       {/* Main Content Area */}
@@ -88,7 +88,7 @@ export default function MovieDetail() {
               <img 
                 src={movie.posterImage} 
                 alt={movie.title} 
-                className="w-full aspect-[3/4] object-cover rounded-xl"
+                className="w-full aspect-auto object-cover rounded-xl"
               />
             </div>
           </div>

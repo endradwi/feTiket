@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Search, ArrowRight } from 'lucide-react'
-import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
-import { DUMMY_DATA } from '../data/dummy'
-import MainLayout from '../layout/main'
+import { Button } from '../../components/ui/Button'
+import { Input } from '../../components/ui/Input'
+import { DUMMY_DATA } from '../../data/dummy'
+import MainLayout from '../../layout/main'
 import { Link } from 'react-router'
 
 export default function Movie() {
@@ -72,7 +72,7 @@ export default function Movie() {
             {filteredMovies.length > 0 ? (
               filteredMovies.map((movie, index) => (
               <div key={`${movie.id}-${index}`} className="group relative rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex flex-col cursor-pointer transition-shadow hover:shadow-md">
-                <div className="relative aspect-[3/4] overflow-hidden">
+                <div className="relative aspect-3/4 overflow-hidden">
                   <img src={movie.image} alt={movie.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                   <div className="absolute top-4 left-4 bg-[#003049] text-white text-xs font-bold px-3 py-1 rounded-md opacity-0 transition-opacity">
                     RECOMMENDED

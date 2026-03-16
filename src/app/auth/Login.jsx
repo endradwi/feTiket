@@ -1,9 +1,9 @@
-import AuthLayout from "../layout/auth"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/Card"
-import { Button } from "../components/ui/Button"
-import { Input } from "../components/ui/Input"
-import { Field, FieldContent, FieldLabel } from "../components/ui/Field"
-import { Separator } from "../components/ui/Separator"
+import AuthLayout from "../../layout/auth"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/Card"
+import { Button } from "../../components/ui/Button"
+import { Input } from "../../components/ui/Input"
+import { Field, FieldContent, FieldLabel } from "../../components/ui/Field"
+import { Separator } from "../../components/ui/Separator"
 import { Link } from "react-router"
 
 function Login() {

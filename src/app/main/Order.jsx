@@ -1,10 +1,10 @@
 import { Link, useNavigate } from 'react-router'
 import { Check } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
-import { setSeats } from '../store/bookingSlice'
-import { Button } from '../components/ui/Button'
-import MainLayout from '../layout/main'
-import { DUMMY_DATA } from '../data/dummy'
+import { setSeats } from '../../store/bookingSlice'
+import { Button } from '../../components/ui/Button'
+import MainLayout from '../../layout/main'
+import { DUMMY_DATA } from '../../data/dummy'
 import React, { useState } from 'react'
 
 export default function Order() {
@@ -324,7 +324,7 @@ export default function Order() {
                    </div>
                    <div className="flex justify-between text-sm items-start">
                      <span className="text-slate-500 font-semibold">Seat choosed</span>
-                     <span className="font-bold text-slate-900 text-right max-w-[150px] break-words leading-tight">
+                     <span className="font-bold text-slate-900 text-right max-w-[150px] wrap-break-words leading-tight">
                        {selectedSeats.length > 0 
                          ? selectedSeats.map(s => s.id).sort().join(', ') 
                          : '-'}

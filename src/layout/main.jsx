@@ -8,7 +8,7 @@ export default function MainLayout({ children }) {
   const location = useLocation()
   
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col">
+    <div className="min-h-screen bg-[#FCBF49] text-slate-900 font-sans flex flex-col">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 bg-white border-b border-slate-100">
         <Link to="/">
@@ -45,8 +45,8 @@ export default function MainLayout({ children }) {
               <Button className="w-full md:w-auto bg-white text-[#003049] hover:bg-white/90 rounded-xl h-auto py-3.5 px-6 font-semibold shadow-lg">Subscribe Now</Button>
             </div>
             {/* decorative curves */}
-            <div className="absolute -bottom-32 -right-32 w-80 h-80 border-[24px] border-white/10 rounded-full"></div>
-            <div className="absolute -top-32 -left-32 w-80 h-80 border-[24px] border-white/10 rounded-full"></div>
+            <div className="absolute -bottom-32 -right-32 w-80 h-80 border-24 border-white/10 rounded-full"></div>
+            <div className="absolute -top-32 -left-32 w-80 h-80 border-24 border-white/10 rounded-full"></div>
           </div>
         </div>
       </section>

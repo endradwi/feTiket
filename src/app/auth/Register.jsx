@@ -1,11 +1,11 @@
-import AuthLayout from "../layout/auth"
-import { Card, CardContent } from "../components/ui/Card"
-import { Button } from "../components/ui/Button"
-import { Input } from "../components/ui/Input"
-import { Field, FieldContent, FieldLabel } from "../components/ui/Field"
-import { Separator } from "../components/ui/Separator"
-import { Label } from "../components/ui/Label"
-import { Checkbox } from "../components/ui/Checkbox"
+import AuthLayout from "../../layout/auth"
+import { Card, CardContent } from "../../components/ui/Card"
+import { Button } from "../../components/ui/Button"
+import { Input } from "../../components/ui/Input"
+import { Field, FieldContent, FieldLabel } from "../../components/ui/Field"
+import { Separator } from "../../components/ui/Separator"
+import { Label } from "../../components/ui/Label"
+import { Checkbox } from "../../components/ui/Checkbox"
 import { Link } from "react-router"
 
 function Register() {
@@ -19,12 +19,12 @@ function Register() {
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#003049] text-white text-sm font-medium">1</div>
               <span className="text-[11px] text-muted-foreground font-medium">Fill Form</span>
             </div>
-            <div className="h-[1px] flex-1 border-dashed border-t-2 border-muted-foreground/30 mx-2 mb-[22px]" />
+            <div className="h-px flex-1 border-dashed border-t-2 border-muted-foreground/30 mx-2 mb-[22px]" />
             <div className="flex flex-col items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted/50 text-muted-foreground/50 text-sm font-medium">2</div>
               <span className="text-[11px] text-muted-foreground/50 font-medium">Activate</span>
             </div>
-            <div className="h-[1px] flex-1 border-dashed border-t-2 border-muted-foreground/30 mx-2 mb-[22px]" />
+            <div className="h-px flex-1 border-dashed border-t-2 border-muted-foreground/30 mx-2 mb-[22px]" />
             <div className="flex flex-col items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted/50 text-muted-foreground/50 text-sm font-medium">3</div>
               <span className="text-[11px] text-muted-foreground/50 font-medium">Done</span>

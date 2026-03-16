@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Plus, Eye, EyeOff, ChevronDown, ChevronUp } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
-import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
-import MainLayout from '../layout/main'
+import { Button } from '../../components/ui/Button'
+import { Input } from '../../components/ui/Input'
+import MainLayout from '../../layout/main'
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('accountSettings')
@@ -87,7 +87,7 @@ export default function Profile() {
 
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
                <span className="block text-sm font-semibold text-slate-700 mb-4">Loyalty Points</span>
-               <div className="bg-gradient-to-r from-[#003049] to-[#8C6EEA] w-full h-28 rounded-2xl relative overflow-hidden flex flex-col justify-center px-6 shadow-md shadow-[#003049]/20">
+               <div className="bg-linear-to-r from-[#003049] to-[#8C6EEA] w-full h-28 rounded-2xl relative overflow-hidden flex flex-col justify-center px-6 shadow-md shadow-[#003049]/20">
                   <div className="absolute right-[-20px] top-[-20px] w-24 h-24 bg-white/10 rounded-full"></div>
                   <div className="absolute right-4 bottom-2 text-4xl">🌟</div>
                   <div className="text-white">

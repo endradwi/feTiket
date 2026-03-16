@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { X, Upload, Calendar, Clock, Plus } from 'lucide-react'
-import { Button } from '../components/ui/Button'
-import { Input } from '../components/ui/Input'
+import { Button } from '../../components/ui/Button'
+import { Input } from '../../components/ui/Input'
 
 export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie }) {
   const [formData, setFormData] = useState({
@@ -25,7 +25,7 @@ export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie 
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
       <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
         {/* Header */}
         <div className="flex items-center justify-between p-8 border-b border-slate-100">
