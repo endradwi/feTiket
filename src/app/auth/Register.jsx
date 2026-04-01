@@ -8,7 +8,34 @@ import { Label } from "../../shared/components/ui/Label"
 import { Checkbox } from "../../shared/components/ui/Checkbox"
 import { Link } from "react-router"
 
+import { useForm, Controller } from "react-hook-form"
+import { useNavigate } from "react-router"
+import apiClient from "../../lib/api-client"
+
 function Register() {
+  const navigate = useNavigate()
+  
+  const { register, handleSubmit, control, formState: { errors } } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+      terms: false
+    }
+  })
+
+  const onSubmit = async (data) => {
+    try {
+      const userData = { ...data }
+      delete userData.terms
+      
+      await apiClient.post("/auth/register", userData)
+      // On successful registration, typically we redirected to login
+      navigate("/login")
+    } catch (err) {
+      console.log("error", err)
+    }
+  }
+
   return (
     <AuthLayout>
       <Card className="w-full border-none shadow-xl rounded-2xl">
@@ -31,27 +58,64 @@ function Register() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Field>
               <FieldLabel className="text-sm font-medium">Email</FieldLabel>
               <FieldContent>
-                <Input placeholder="Enter your email" className="h-12 bg-transparent" />
+                <Input 
+                  {...register("email", { 
+                    required: "Email is required", 
+                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" } 
+                  })}
+                  placeholder="Enter your email" 
+                  className={`h-12 bg-transparent ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`} 
+                />
+                {errors.email && <span className="text-xs text-red-500 mt-1">{errors.email.message}</span>}
               </FieldContent>
             </Field>
+            
             <Field>
               <FieldLabel className="text-sm font-medium">Password</FieldLabel>
               <FieldContent>
-                <Input variant="password" placeholder="Enter your password" className="h-12 bg-transparent" />
+                <Input 
+                  {...register("password", { 
+                    required: "Password is required",
+                    minLength: { value: 6, message: "Password must be at least 6 characters" }
+                  })}
+                  variant="password" 
+                  placeholder="Enter your password" 
+                  className={`h-12 bg-transparent ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+                />
+                {errors.password && <span className="text-xs text-red-500 mt-1">{errors.password.message}</span>}
               </FieldContent>
             </Field>
             
-            <div className="flex items-center gap-3 pt-1 pb-3">
-              <Checkbox id="terms" className="data-[state=checked]:bg-[#003049] data-[state=checked]:border-[#003049]" />
-              <Label htmlFor="terms" className="text-[13px] font-normal text-muted-foreground cursor-pointer">I agree to terms & conditions</Label>
+            <div className="flex flex-col gap-1 pt-1 pb-3">
+              <div className="flex items-center gap-3">
+                <Controller
+                  name="terms"
+                  control={control}
+                  rules={{ required: "You must agree to the terms & conditions" }}
+                  render={({ field }) => (
+                    <Checkbox 
+                      id="terms" 
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="data-[state=checked]:bg-[#003049] data-[state=checked]:border-[#003049]" 
+                    />
+                  )}
+                />
+                <Label htmlFor="terms" className="text-[13px] font-normal text-muted-foreground cursor-pointer">I agree to terms & conditions</Label>
+              </div>
+              {errors.terms && <span className="text-xs text-red-500 ml-8">{errors.terms.message}</span>}
             </div>
             
-            <Button className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white h-12 text-base font-medium">
-              Join For Free Now
+            <Button 
+              type="submit"
+              disabled={status === "loading"}
+              className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white h-12 text-base font-medium disabled:opacity-70"
+            >
+              {status === "loading" ? "Creating account..." : "Join For Free Now"}
             </Button>
             
             <div className="flex items-center justify-center pt-2">
@@ -60,7 +124,7 @@ function Register() {
                 Log In
               </Link>
             </div>
-          </div>
+          </form>
 
           <div className="flex items-center gap-3 py-1">
             <Separator className="flex-1"/>
