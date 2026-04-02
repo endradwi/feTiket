@@ -1,23 +1,54 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router'
-import { Download, Printer } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router'
+import { Download, Loader2 } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { QRCodeSVG } from 'qrcode.react'
 import { Button } from '../../shared/components/ui/Button'
 import MainLayout from '../../layout/main'
+import apiClient from '../../lib/api-client'
 
 export default function Ticket() {
   const navigate = useNavigate()
+  const location = useLocation()
   const booking = useSelector((state) => state.booking)
+  const orderId = location.state?.orderId || booking.bookingId
 
-  // Redirect to home if no booking data is present
+  const [ticketData, setTicketData] = React.useState(null)
+  const [loading, setLoading] = React.useState(false)
+
   React.useEffect(() => {
-    if (!booking.bookingId) {
+    if (!orderId) {
       navigate('/')
+      return
     }
-  }, [booking.bookingId, navigate])
+
+    const fetchTicket = async () => {
+      try {
+        setLoading(true)
+        const response = await apiClient.get(`/orders/${orderId}/ticket`)
+        if (response.result) {
+          setTicketData(response.result)
+        }
+      } catch (error) {
+        console.error("Failed to fetch ticket", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTicket()
+  }, [orderId, navigate])
 
   const { movie, date, time, seats, totalPrice, bookingId } = booking
+  
+  const displayMovieTitle = ticketData?.movie_title || movie?.title || "Unknown Movie"
+  const displayDate = ticketData?.show_date 
+    ? new Date(ticketData.show_date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) 
+    : date
+  const displayTime = ticketData?.show_time || time
+  const displaySeats = ticketData?.seats ? ticketData.seats.map(s => s.name) : (seats?.map ? seats.map(s => s.id || s) : [])
+  const displayTotalPrice = ticketData?.total_price || totalPrice
+  const displayQrValue = ticketData?.order_number || bookingId || String(orderId) || ""
   
   return (
     <MainLayout>
@@ -49,12 +80,18 @@ export default function Ticket() {
 
           {/* Right Side: The Ticket */}
           <div className="md:w-[45%] bg-[#F5F6F8] p-8 md:p-12 flex flex-col justify-center items-center relative overflow-hidden">
-             <div className="w-full max-w-sm">
+             <div className="w-full max-w-sm relative">
                 
+                {loading && (
+                   <div className="absolute inset-0 bg-white/70 backdrop-blur-sm z-20 flex items-center justify-center rounded-2xl">
+                      <Loader2 className="w-8 h-8 text-[#003049] animate-spin" />
+                   </div>
+                )}
+
                 {/* Top Part of Ticket (QR Code) */}
                 <div className="bg-white rounded-t-2xl p-8 flex justify-center items-center relative shadow-sm border-b-2 border-dashed border-slate-200">
                    <QRCodeSVG 
-                      value={bookingId || ""} 
+                      value={displayQrValue} 
                       size={160}
                       level={"L"}
                       includeMargin={false}
@@ -68,36 +105,36 @@ export default function Ticket() {
 
                 {/* Middle Part of Ticket (Details) */}
                 <div className="bg-white rounded-b-2xl p-8 relative shadow-sm mb-8">
-                   <div className="grid grid-cols-2 gap-y-6 gap-x-4 mb-6">
+                    <div className="grid grid-cols-2 gap-y-6 gap-x-4 mb-6">
                       <div className="flex-1">
                         <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Movie</span>
-                        <p className="font-bold text-slate-800 text-sm">{movie?.title}</p>
+                        <p className="font-bold text-slate-800 text-sm">{displayMovieTitle}</p>
                      </div>
                      <div className="flex-1">
                         <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Category</span>
-                        <p className="font-bold text-slate-800 text-sm">{movie?.genre?.join(', ')}</p>
+                        <p className="font-bold text-slate-800 text-sm">{movie?.genre?.join(', ') || "Regular"}</p>
                      </div>
                       <div className="flex-1">
                         <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Date</span>
-                        <p className="font-bold text-slate-800 text-sm">{date}</p>
+                        <p className="font-bold text-slate-800 text-sm">{displayDate}</p>
                      </div>
                      <div className="flex-1">
                         <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-1">Time</span>
-                        <p className="font-bold text-slate-800 text-sm">{time}</p>
+                        <p className="font-bold text-slate-800 text-sm">{displayTime}</p>
                      </div>
                       <div>
                          <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Count</span>
-                         <span className="block text-sm font-bold text-slate-900">{seats?.length} pcs</span>
+                         <span className="block text-sm font-bold text-slate-900">{displaySeats.length} pcs</span>
                       </div>
                       <div>
                          <span className="block text-[10px] uppercase text-slate-400 font-semibold tracking-wider mb-1">Seats</span>
-                         <span className="block text-sm font-bold text-slate-900 truncate">{seats?.join(', ')}</span>
+                         <span className="block text-sm font-bold text-slate-900 truncate" title={displaySeats.join(', ')}>{displaySeats.join(', ')}</span>
                       </div>
                    </div>
 
                    <div className="flex justify-between items-center border-t border-slate-100 pt-6 mt-2">
                       <span className="text-sm font-semibold text-slate-900">Total</span>
-                      <span className="font-bold text-slate-900">${totalPrice?.toFixed(2)}</span>
+                      <span className="font-bold text-slate-900">Rp {Number(displayTotalPrice).toLocaleString()}</span>
                    </div>
                 </div>
 
