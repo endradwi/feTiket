@@ -111,7 +111,7 @@ export default function MainLayout({ children }) {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div className="space-y-6">
-              <img src="/logo.png" alt="Tickitz" className="h-10 text-[#003049]" style={{filter: 'brightness(0) saturate(100%) invert(24%) sepia(50%) saturate(6015%) hue-rotate(251deg) brightness(85%) contrast(98%)'}} />
+              <img src="/logo.png" alt="Tickitz" className="h-10 text-[#003049]" />
               <p className="text-sm font-medium text-slate-500 mb-8 max-w-xs leading-relaxed">
                 Stop waiting in line. Buy tickets conveniently, watch movies quietly.
               </p>
@@ -130,7 +130,7 @@ export default function MainLayout({ children }) {
               <ul className="space-y-4">
                 {DUMMY_DATA.sponsors.map(s => (
                   <li key={s.id}>
-                    <img src={s.logo} alt={s.name} className="h-6 object-contain" style={{filter: 'grayscale(100%)'}} />
+                    <img src={s.logo} alt={s.name} className="h-6 object-contain" />
                   </li>
                 ))}
               </ul>

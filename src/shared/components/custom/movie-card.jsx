@@ -1,8 +1,20 @@
 import React from 'react'
-import { Link } from 'react-router'
+import { useNavigate } from 'react-router'
 import { Button } from '../ui/Button'
+import { getCookie } from '../../../lib/cookies'
 
 function MovieCard({ movie }) {
+  const navigate = useNavigate()
+
+  const handleAction = (path) => {
+    const token = getCookie("access_token")
+    if (!token) {
+      alert("Please login first to see movie details!")
+      return
+    }
+    navigate(path)
+  }
+
   return (
      <div className="group relative rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex flex-col cursor-pointer transition-shadow hover:shadow-md">
               <div className="relative aspect-3/4 overflow-hidden">
@@ -11,10 +23,18 @@ function MovieCard({ movie }) {
                   RECOMMENDED
                 </div>
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 p-6">
-                  <Link to={`/movie/${movie.id}`} className="w-full">
-                    <Button variant="outline" className="w-full text-white border-white bg-transparent hover:bg-white hover:text-black rounded-lg">Details</Button>
-                  </Link>
-                  <Button className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white rounded-lg">Buy Ticket</Button>
+                  <Button 
+                    onClick={() => handleAction(`/movie/${movie.id}`)}
+                    variant="outline" 
+                    className="w-full text-white border-white bg-transparent hover:bg-white hover:text-black rounded-lg"
+                  >
+                    Details
+                  </Button>
+                  <Button 
+                    className="w-full bg-[#003049] hover:bg-[#003049]/90 text-white rounded-lg"
+                  >
+                    Buy Ticket
+                  </Button>
                 </div>
               </div>
               <div className="p-5 text-center flex flex-col flex-1 justify-between">
