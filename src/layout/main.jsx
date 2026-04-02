@@ -1,12 +1,41 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router'
-import { Instagram, Twitter, Facebook, Youtube } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router'
+import { Instagram, Twitter, Facebook, Youtube, LogOut, Search } from 'lucide-react'
 import { Button } from '../shared/components/ui/Button'
 import { DUMMY_DATA } from '../data/dummy'
+import { getCookie, removeCookie } from '../lib/cookies'
+import apiClient from '../lib/api-client'
 
 export default function MainLayout({ children }) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const [userData, setUserData] = useState(null)
   
+  const userId = getCookie("userId")
+  const token = getCookie("access_token")
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (userId && token) {
+        try {
+          const response = await apiClient.get(`/users/${userId}`)
+          setUserData(response.result)
+        } catch (err) {
+          console.error("Failed to fetch user data:", err)
+        }
+      }
+    }
+
+    fetchUser()
+  }, [userId, token])
+
+  const handleLogout = () => {
+    removeCookie("access_token")
+    removeCookie("userId")
+    setUserData(null)
+    navigate("/login")
+  }
+
   return (
     <div className="min-h-screen bg-[#FCBF49] text-slate-900 font-sans flex flex-col">
       {/* Navbar */}
@@ -20,12 +49,39 @@ export default function MainLayout({ children }) {
           <Link to="#" className="text-muted-foreground hover:text-[#003049] py-1 transition-colors">Buy Ticket</Link>
         </div>
         <div className="flex items-center gap-4">
-          <Link to="/login">
-            <Button variant="outline" className="w-[100px] text-[#003049] border-[#003049] hover:bg-[#003049]/10 font-semibold rounded-lg">Sign In</Button>
-          </Link>
-          <Link to="/register">
-            <Button className="w-[100px] bg-[#003049] hover:bg-[#003049]/90 text-white font-semibold rounded-lg">Sign Up</Button>
-          </Link>
+          {token ? (
+            <div className="flex items-center gap-6">
+              <button className="text-muted-foreground hover:text-[#003049] transition-colors">
+                <Search className="w-5 h-5" />
+              </button>
+              <div className="flex items-center gap-3">
+                <Link to="/profile" className="w-10 h-10 rounded-full overflow-hidden border border-slate-200">
+                  <img 
+                    src={userData?.image || "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=256&auto=format&fit=crop"} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                </Link>
+                <Button 
+                  onClick={handleLogout}
+                  variant="ghost" 
+                  size="icon"
+                  className="text-muted-foreground hover:text-red-600"
+                >
+                  <LogOut className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="outline" className="w-[100px] text-[#003049] border-[#003049] hover:bg-[#003049]/10 font-semibold rounded-lg">Sign In</Button>
+              </Link>
+              <Link to="/register">
+                <Button className="w-[100px] bg-[#003049] hover:bg-[#003049]/90 text-white font-semibold rounded-lg">Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 

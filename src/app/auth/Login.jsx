@@ -29,6 +29,7 @@ function Login() {
       
       // Simpan token di cookie
       setCookie("access_token", response.result.token, 7)
+      setCookie("userId", response.result.userId || response.result.user?.id, 7)
       
       // Update user state di redux
       // dispatch(setUser(response.results.user))
