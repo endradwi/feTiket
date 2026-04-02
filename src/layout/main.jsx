@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { Instagram, Twitter, Facebook, Youtube, LogOut, Search } from 'lucide-react'
 import { Button } from '../shared/components/ui/Button'
 import { DUMMY_DATA } from '../data/dummy'
@@ -8,7 +8,6 @@ import apiClient from '../lib/api-client'
 
 export default function MainLayout({ children }) {
   const location = useLocation()
-  const navigate = useNavigate()
   const [userData, setUserData] = useState(null)
   
   const userId = getCookie("userId")
@@ -33,7 +32,7 @@ export default function MainLayout({ children }) {
     removeCookie("access_token")
     removeCookie("userId")
     setUserData(null)
-    navigate("/login")
+    window.location.reload()
   }
 
   return (

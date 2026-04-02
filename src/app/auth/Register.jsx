@@ -11,11 +11,20 @@ import { Link } from "react-router"
 import { useForm, Controller } from "react-hook-form"
 import { useNavigate } from "react-router"
 import apiClient from "../../lib/api-client"
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
+
+const registerSchema = yup.object({
+  email: yup.string().required("Email is required").email("Invalid email format"),
+  password: yup.string().required("Password is required").min(6, "Password must be at least 6 characters"),
+  terms: yup.boolean().oneOf([true], "You must agree to the terms & conditions").required()
+}).required()
 
 function Register() {
   const navigate = useNavigate()
   
   const { register, handleSubmit, control, formState: { errors } } = useForm({
+    resolver: yupResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -63,10 +72,7 @@ function Register() {
               <FieldLabel className="text-sm font-medium">Email</FieldLabel>
               <FieldContent>
                 <Input 
-                  {...register("email", { 
-                    required: "Email is required", 
-                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" } 
-                  })}
+                  {...register("email")}
                   placeholder="Enter your email" 
                   className={`h-12 bg-transparent ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`} 
                 />
@@ -78,10 +84,7 @@ function Register() {
               <FieldLabel className="text-sm font-medium">Password</FieldLabel>
               <FieldContent>
                 <Input 
-                  {...register("password", { 
-                    required: "Password is required",
-                    minLength: { value: 6, message: "Password must be at least 6 characters" }
-                  })}
+                  {...register("password")}
                   variant="password" 
                   placeholder="Enter your password" 
                   className={`h-12 bg-transparent ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
@@ -95,7 +98,6 @@ function Register() {
                 <Controller
                   name="terms"
                   control={control}
-                  rules={{ required: "You must agree to the terms & conditions" }}
                   render={({ field }) => (
                     <Checkbox 
                       id="terms" 

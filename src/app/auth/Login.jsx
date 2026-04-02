@@ -8,11 +8,19 @@ import { useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router"
 import apiClient from "../../lib/api-client"
 import { setCookie } from "../../lib/cookies"
+import * as yup from "yup"
+import { yupResolver } from "@hookform/resolvers/yup"
+
+const loginSchema = yup.object({
+  email: yup.string().required("Email is required").email("Invalid email format"),
+  password: yup.string().required("Password is required").min(6, "Password must be at least 6 characters")
+}).required()
 
 function Login() {
   const navigate = useNavigate()
   
   const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(loginSchema),
     defaultValues: {
       email: "",
       password: ""
@@ -29,10 +37,6 @@ function Login() {
       
       // Simpan token di cookie
       setCookie("access_token", response.result.token, 7)
-      setCookie("userId", response.result.userId || response.result.user?.id, 7)
-      
-      // Update user state di redux
-      // dispatch(setUser(response.results.user))
       
       navigate("/")
     } catch (err) {
@@ -56,10 +60,7 @@ function Login() {
               <FieldLabel className="text-sm font-medium">Email</FieldLabel>
               <FieldContent>
                 <Input 
-                  {...register("email", { 
-                    required: "Email is required", 
-                    pattern: { value: /^\S+@\S+$/i, message: "Invalid email format" } 
-                  })}
+                  {...register("email")}
                   placeholder="Enter your email" 
                   className={`h-12 bg-transparent ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`} 
                 />
@@ -71,7 +72,7 @@ function Login() {
               <FieldLabel className="text-sm font-medium">Password</FieldLabel>
               <FieldContent>
                 <Input 
-                  {...register("password", { required: "Password is required" })}
+                  {...register("password")}
                   variant="password" 
                   placeholder="Enter your password" 
                   className={`h-12 bg-transparent ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
