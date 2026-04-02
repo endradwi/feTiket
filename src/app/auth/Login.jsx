@@ -38,7 +38,11 @@ function Login() {
       // Simpan token di cookie
       setCookie("access_token", response.result.token, 7)
       
-      navigate("/")
+      if (response.result.role_id === 2) {
+        navigate("/admin")
+      } else {
+        navigate("/")
+      }
     } catch (err) {
       console.log("error", err)
     }
