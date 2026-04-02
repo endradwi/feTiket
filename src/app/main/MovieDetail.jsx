@@ -17,6 +17,33 @@ export default function MovieDetail() {
   const [movie, setMovie] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  // Formatting Helpers
+  const formatDate = (dateString) => {
+    if (!dateString) return "No release date"
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }).format(new Date(dateString))
+    } catch {
+      return dateString
+    }
+  }
+
+  const formatDuration = (durationString) => {
+    if (!durationString) return "N/A"
+    try {
+      const parts = durationString.split(':')
+      const h = parseInt(parts[0])
+      const m = parseInt(parts[1])
+      if (isNaN(h) || isNaN(m)) return durationString
+      return `${h > 0 ? `${h} hours ` : ""}${m} minutes`
+    } catch {
+      return durationString
+    }
+  }
   
   const [selectedCinema, setSelectedCinema] = useState(null)
   
@@ -31,7 +58,23 @@ export default function MovieDetail() {
       try {
         setLoading(true)
         const response = await apiClient.get(`/movies/${id}`)
-        setMovie(response.result)
+        const result = response.result
+        
+        if (result) {
+          // Map API fields to UI state
+          setMovie({
+            ...result,
+            posterImage: result.image,
+            bannerImage: result.image, // Use same image for banner
+            releaseDate: formatDate(result.released_at),
+            directedBy: result.director_name,
+            duration: formatDuration(result.duration),
+            casts: result.casters ? result.casters.join(", ") : result.caster_name,
+            genres: result.genres && result.genres.length > 0 ? result.genres : [result.genre_name]
+          })
+        } else {
+          setError("Movie data not found.")
+        }
       } catch (err) {
         console.error("Failed to fetch movie details:", err)
         setError("Movie not found or server error.")
@@ -115,18 +158,18 @@ export default function MovieDetail() {
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12 relative -mt-32 md:-mt-48 z-10">
           
           {/* Poster Column */}
-          <div className="w-[200px] md:w-[280px] shrink-0 mx-auto md:mx-0">
-            <div className="rounded-2xl overflow-hidden shadow-xl bg-white p-4 border border-slate-100">
+          {/* <div className="w-[200px] md:w-[280px] shrink-0 mx-auto md:mx-0"> */}
+            <div className="absolute -top-20 rounded-2xl overflow-hidden shadow-xl bg-white p-4 border border-slate-100">
               <img 
                 src={movie.posterImage} 
                 alt={movie.title} 
-                className="w-full aspect-auto object-cover rounded-xl"
+                className="w-full  size-96 object-cover rounded-xl"
               />
             </div>
-          </div>
+          {/* </div> */}
 
           {/* Details Column */}
-          <div className="flex-1 pt-4 md:pt-[240px]">
+          <div className="flex-1 pt-4 md:pt-8 md:pl-80">
             <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 text-center md:text-left">{movie.title}</h1>
             
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8">
@@ -135,7 +178,7 @@ export default function MovieDetail() {
               ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-y-6 gap-x-8 max-w-2xl mb-10">
+            <div className="grid grid-cols-2 gap-y-6 gap-x-8 max-w-2xl mb-20">
               <div>
                 <p className="text-muted-foreground text-sm font-medium mb-1">Release date</p>
                 <p className="font-semibold text-slate-900">{movie.releaseDate}</p>
@@ -155,15 +198,15 @@ export default function MovieDetail() {
             </div>
 
             {/* Synopsis */}
-            <div className="mb-16">
+            <div className="mb-16 -ml-72">
               <h3 className="text-xl font-bold text-slate-900 mb-4">Synopsis</h3>
-              <p className="text-slate-500 leading-relaxed max-w-3xl">
+              <p className="text-slate-500 leading-relaxed max-w-7xl">
                 {movie.synopsis}
               </p>
             </div>
             
             {/* Book Tickets */}
-            <div>
+            <div className='-ml-72'>
               <h3 className="text-2xl font-bold text-slate-900 mb-6">Book Tickets</h3>
               
               <div className="flex flex-col md:flex-row items-end gap-4 mb-8">
