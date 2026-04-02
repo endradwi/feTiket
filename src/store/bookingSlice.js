@@ -5,6 +5,8 @@ const initialState = {
   cinema: null,
   date: null,
   time: null,
+  showtime_id: null,
+  price: 0,
   seats: [], // Array of seat objects { id, type, partner? }
   totalPrice: 0,
   personalInfo: {
@@ -23,11 +25,13 @@ export const bookingSlice = createSlice({
   initialState,
   reducers: {
     setBookingDetails: (state, action) => {
-      // payload: { movie, cinema, date, time }
+      // payload: { movie, cinema, date, time, showtime_id, price }
       state.movie = action.payload.movie
       state.cinema = action.payload.cinema
       state.date = action.payload.date
       state.time = action.payload.time
+      state.showtime_id = action.payload.showtime_id
+      state.price = action.payload.price || 0
     },
     setSeats: (state, action) => {
       // payload: { seats, totalPrice }

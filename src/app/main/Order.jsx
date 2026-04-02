@@ -1,11 +1,11 @@
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { Check } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setSeats } from '../../store/bookingSlice'
 import { Button } from '../../shared/components/ui/Button'
 import MainLayout from '../../layout/main'
-import { DUMMY_DATA } from '../../data/dummy'
-import React, { useState } from 'react'
+import apiClient from '../../lib/api-client'
 
 export default function Order() {
   const navigate = useNavigate()
@@ -20,19 +20,43 @@ export default function Order() {
   }, [booking.movie, booking.cinema, navigate])
 
   const [selectedSeats, setSelectedSeats] = useState(booking.seats || [])
-  // each item is { id: 'A1', type: 'single' | 'love-nest' }
   const [dragStartSeat, setDragStartSeat] = useState(null)
   
   const movie = booking.movie || {}
   const cinema = booking.cinema || {}
-  const ticketPrice = 10
+  const ticketPrice = booking.price || 10
+  const showtime_id = booking.showtime_id
   
+  const [realSeatsData, setRealSeatsData] = useState([])
+  const [soldSeats, setSoldSeats] = useState([])
+  const [loadingSeats, setLoadingSeats] = useState(false)
+
+  useEffect(() => {
+    if (showtime_id) {
+      const fetchSeats = async () => {
+        try {
+          setLoadingSeats(true)
+          const response = await apiClient.get(`/orders/seats?showtime_id=${showtime_id}`)
+          if (response.result) {
+            setRealSeatsData(response.result)
+            // seat: { id, name, price, is_occupied }
+            const occupied = response.result.filter(s => s.is_occupied).map(s => s.name)
+            setSoldSeats(occupied)
+          }
+        } catch (error) {
+          console.error("Failed to fetch seats", error)
+        } finally {
+          setLoadingSeats(false)
+        }
+      }
+      fetchSeats()
+    }
+  }, [showtime_id])
+
   const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
-  // Let's hardcode some sold seats
-  const soldSeats = ['A6', 'B2', 'B3', 'C9', 'D2', 'D12', 'E4', 'F13', 'G3']
   
   const handleMouseDown = (seatId) => {
-    if (soldSeats.includes(seatId)) return
+    if (loadingSeats || soldSeats.includes(seatId)) return
     setDragStartSeat(seatId)
   }
 
@@ -88,8 +112,7 @@ export default function Order() {
   }
   
   const getTotalPayment = () => {
-     // example price calculation based on picture
-     return selectedSeats.length * 10 
+     return selectedSeats.length * ticketPrice 
   }
 
   return (
@@ -148,7 +171,9 @@ export default function Order() {
                         <span key={g} className="px-3 py-1 bg-slate-50 border border-slate-100 text-slate-500 rounded-full text-xs font-medium">{g}</span>
                       ))}
                     </div>
-                    <p className="text-sm font-semibold text-slate-900">Reguler • 11:00 PM</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      {booking.date ? `${booking.date}` : "Reguler"} • {booking.time ? booking.time : "11:00 PM"}
+                    </p>
                   </div>
                 </div>
                 <Button className="bg-slate-50 border border-slate-200 text-[#003049] hover:bg-[#003049] hover:border-[#003049] hover:text-white rounded-xl font-bold px-8 shadow-sm">Change</Button>
@@ -315,12 +340,12 @@ export default function Order() {
                      <span className="font-bold text-slate-900 text-right max-w-[150px] truncate">{movie.title}</span>
                    </div>
                    <div className="flex justify-between text-sm items-center">
-                     <span className="text-slate-500 font-semibold">Tuesday, 07 July 2026</span>
-                     <span className="font-bold text-slate-900 text-right">11:00pm</span>
+                     <span className="text-slate-500 font-semibold">{booking.date ? booking.date : "Tuesday, 07 July 2026"}</span>
+                     <span className="font-bold text-slate-900 text-right">{booking.time ? booking.time : "11:00pm"}</span>
                    </div>
                    <div className="flex justify-between text-sm items-center">
                      <span className="text-slate-500 font-semibold">One ticket price</span>
-                     <span className="font-bold text-slate-900 text-right">$10</span>
+                     <span className="font-bold text-slate-900 text-right">Rp {ticketPrice.toLocaleString()}</span>
                    </div>
                    <div className="flex justify-between text-sm items-start">
                      <span className="text-slate-500 font-semibold">Seat choosed</span>
@@ -335,23 +360,43 @@ export default function Order() {
                  <div className="pt-6 border-t border-slate-100 flex justify-between items-center mb-2">
                    <span className="font-bold text-lg text-slate-900">Total Payment</span>
                    <span className="text-2xl font-bold text-[#003049]">
-                     ${getTotalPayment()}
+                     Rp {getTotalPayment().toLocaleString()}
                    </span>
                  </div>
                </div>
                
                <div className="w-full">
                  <Button 
-                   onClick={() => {
-                     dispatch(setSeats({
-                       seats: selectedSeats,
-                       totalPrice: selectedSeats.length * ticketPrice
-                     }))
-                     navigate('/payment')
+                   onClick={async () => {
+                     try {
+                        const seat_ids = selectedSeats.map(s => {
+                           const found = realSeatsData.find(rs => rs.name === s.id)
+                           return found ? found.id : null
+                        }).filter(Boolean)
+
+                        if (!showtime_id || seat_ids.length === 0) return;
+
+                        const orderResponse = await apiClient.post('/orders', {
+                           showtime_id: showtime_id,
+                           seat_ids: seat_ids
+                        })
+                        
+                        if (orderResponse.result) {
+                          dispatch(setSeats({
+                            seats: selectedSeats,
+                            totalPrice: selectedSeats.length * ticketPrice
+                          }))
+                          navigate('/payment', { state: { orderId: orderResponse.result.id } })
+                        }
+                     } catch (error) {
+                        console.error("Failed to checkout", error)
+                        alert("Checkout failed. Please ensure you are logged in and selecting valid seats.")
+                     }
                    }}
-                   disabled={selectedSeats.length === 0}
-                   className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                   disabled={selectedSeats.length === 0 || loadingSeats}
+                   className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                  >
+                   {loadingSeats && <Loader2 className="w-5 h-5 animate-spin"/>}
                    Checkout now
                  </Button>
                </div>

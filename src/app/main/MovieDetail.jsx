@@ -339,6 +339,7 @@ export default function MovieDetail() {
                   onClick={() => {
                     const c = filteredCinemas.find(ci => ci.cinema_id === selectedCinema)
                     if (selectedDate && selectedTime && c) {
+                      const showtime = c.showtimes.find(st => st.show_date === selectedDate && st.show_time === selectedTime)
                       dispatch(setBookingDetails({
                         movie: movie,
                         cinema: {
@@ -347,6 +348,8 @@ export default function MovieDetail() {
                           name: c.cinema_name,
                           logo: c.cinema_image
                         },
+                        showtime_id: showtime ? showtime.showtime_id : null,
+                        price: showtime ? showtime.price : 0,
                         date: selectedDate,
                         time: selectedTime
                       }))
