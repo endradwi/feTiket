@@ -20,7 +20,12 @@ async function apiClient(endpoint, { body, ...customConfig } = {}) {
   };
 
   if (body) {
-    config.body = JSON.stringify(body);
+    if (body instanceof FormData) {
+      config.body = body;
+      delete config.headers["Content-Type"];
+    } else {
+      config.body = JSON.stringify(body);
+    }
   }
 
   try {
@@ -40,6 +45,7 @@ async function apiClient(endpoint, { body, ...customConfig } = {}) {
 apiClient.get = (endpoint, config) => apiClient(endpoint, { ...config, method: "GET" });
 apiClient.post = (endpoint, body, config) => apiClient(endpoint, { ...config, method: "POST", body });
 apiClient.put = (endpoint, body, config) => apiClient(endpoint, { ...config, method: "PUT", body });
+apiClient.patch = (endpoint, body, config) => apiClient(endpoint, { ...config, method: "PATCH", body });
 apiClient.delete = (endpoint, config) => apiClient(endpoint, { ...config, method: "DELETE" });
 
 export default apiClient;
