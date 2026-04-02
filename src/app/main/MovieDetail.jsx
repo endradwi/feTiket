@@ -1,36 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { CalendarDays, Clock, MapPin, ChevronDown } from 'lucide-react'
+import { CalendarDays, Clock, MapPin, ChevronDown, Loader2 } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setBookingDetails } from '../../store/bookingSlice'
 import { Button } from '../../shared/components/ui/Button'
 import { Input } from '../../shared/components/ui/Input'
 import { DUMMY_DATA } from '../../data/dummy'
 import MainLayout from '../../layout/main'
+import apiClient from '../../lib/api-client'
 
 export default function MovieDetail() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { id } = useParams()
   
-  // Find the movie from any available list based on ID from URL
-  const selectedMovieFromList = 
-    DUMMY_DATA.movieList.find(m => m.id === parseInt(id)) || 
-    DUMMY_DATA.nowShowingMovies.find(m => m.id === parseInt(id)) ||
-    DUMMY_DATA.upcomingMovies.find(m => m.id === parseInt(id))
-  
-  // Merge with movieDetails to get the full UI fields while keeping specific movie data
-  const movie = {
-    ...DUMMY_DATA.movieDetails,
-    ...(selectedMovieFromList || {}),
-    // Map image property from list to poster and banner
-    posterImage: selectedMovieFromList?.image || DUMMY_DATA.movieDetails.posterImage,
-    bannerImage: selectedMovieFromList?.image || DUMMY_DATA.movieDetails.bannerImage,
-    // Ensure genres is always an array
-    genres: selectedMovieFromList?.genres || DUMMY_DATA.movieDetails.genres
-  }
-  
-  const cinemas = DUMMY_DATA.cinemas
+  const [movie, setMovie] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   
   const [selectedCinema, setSelectedCinema] = useState(null)
   
@@ -38,7 +24,25 @@ export default function MovieDetail() {
   const [selectedTime, setSelectedTime] = useState('')
   const [selectedLocation, setSelectedLocation] = useState('')
   
-  const [filteredCinemas, setFilteredCinemas] = useState(cinemas)
+  const [filteredCinemas, setFilteredCinemas] = useState(DUMMY_DATA.cinemas)
+
+  useEffect(() => {
+    const fetchMovieDetail = async () => {
+      try {
+        setLoading(true)
+        const response = await apiClient.get(`/movies/${id}`)
+        setMovie(response.result)
+      } catch (err) {
+        console.error("Failed to fetch movie details:", err)
+        setError("Movie not found or server error.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMovieDetail()
+    window.scrollTo(0, 0)
+  }, [id])
 
   // Initial filter sync
   useEffect(() => {
@@ -60,9 +64,37 @@ export default function MovieDetail() {
 
   const handleFilter = () => {
     // filter cinemas by location
-    const result = cinemas.filter(c => c.location.toLowerCase() === selectedLocation.toLowerCase())
+    const result = DUMMY_DATA.cinemas.filter(c => c.location.toLowerCase() === selectedLocation.toLowerCase())
     setFilteredCinemas(result.length > 0 ? result : [])
     setSelectedCinema(null)
+  }
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 bg-white">
+          <Loader2 className="w-12 h-12 text-[#003049] animate-spin" />
+          <p className="text-slate-500 font-bold text-lg animate-pulse">Loading movie details...</p>
+        </div>
+      </MainLayout>
+    )
+  }
+
+  if (error || !movie) {
+    return (
+      <MainLayout>
+        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6 bg-white px-8 text-center">
+          <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center">
+            <span className="text-4xl">🎬</span>
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900">{error || "Movie Not Found"}</h2>
+          <p className="text-slate-500 max-w-md">We couldn't find the movie you're looking for. It might have been removed or the link is incorrect.</p>
+          <Button onClick={() => navigate('/')} className="bg-[#003049] hover:bg-[#003049]/90 text-white px-8 rounded-xl font-bold">
+            Back to Home
+          </Button>
+        </div>
+      </MainLayout>
+    )
   }
 
   return (
@@ -253,7 +285,7 @@ export default function MovieDetail() {
               <div className="flex justify-center max-w-sm mx-auto">
                 <Button 
                   onClick={() => {
-                    const c = cinemas.find(ci => ci.id === selectedCinema)
+                    const c = DUMMY_DATA.cinemas.find(ci => ci.id === selectedCinema)
                     if (selectedDate && selectedTime && c) {
                       dispatch(setBookingDetails({
                         movie: movie,

@@ -1,9 +1,28 @@
-import React from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react'
 import { Button } from '../../../../shared/components/ui/Button'
-import { DUMMY_DATA } from '../../../../data/dummy'
+import apiClient from '../../../../lib/api-client'
 
 const UpcomingMovies = () => {
+  const [movies, setMovies] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await apiClient.get('/movies')
+        // Using same movies list but could filter by 'upcoming' if API supported it
+        setMovies(response.result || [])
+      } catch (err) {
+        console.error("Failed to fetch upcoming movies:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchMovies()
+  }, [])
+
   return (
     <section className="px-8 py-20 bg-slate-50">
       <div className="max-w-7xl mx-auto">
@@ -17,26 +36,38 @@ const UpcomingMovies = () => {
             <Button size="icon" className="w-10 h-10 rounded-full bg-[#003049] text-white hover:bg-[#003049]/90"><ArrowRight className="w-4 h-4" /></Button>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {DUMMY_DATA.upcomingMovies.map(movie => (
-            <div key={movie.id} className="rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex flex-col">
-              <div className="relative aspect-3/4">
-                <img src={movie.image} alt={movie.title} className="w-full h-full object-cover" />
-              </div>
-              <div className="p-5 text-center flex flex-col flex-1 justify-between">
-                <div>
-                  <h3 className="font-bold text-lg mb-1">{movie.title}</h3>
-                  <p className="text-[#003049] text-sm font-semibold mb-4">{movie.releaseDate}</p>
+        
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <Loader2 className="w-10 h-10 text-[#003049] animate-spin" />
+            <p className="text-slate-500 font-medium">Loading upcoming movies...</p>
+          </div>
+        ) : movies.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {movies.slice(0, 4).map(movie => (
+              <div key={movie.id} className="group cursor-pointer rounded-2xl overflow-hidden bg-white border border-slate-100 shadow-sm flex flex-col transition-all hover:shadow-md">
+                <div className="relative aspect-3/4 overflow-hidden">
+                  <img src={movie.image} alt={movie.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 </div>
-                <div className="flex flex-wrap items-center justify-center gap-2 mt-auto">
-                  {movie.genres.map(g => (
-                    <span key={g} className="px-3 py-1 bg-slate-50 border border-slate-100 text-slate-500 rounded-full text-xs font-medium">{g}</span>
-                  ))}
+                <div className="p-5 text-center flex flex-col flex-1 justify-between">
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">{movie.title}</h3>
+                    <p className="text-[#003049] text-sm font-semibold mb-4">{movie.releaseDate || 'December 2024'}</p>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-2 mt-auto">
+                    {movie.genres?.map(g => (
+                      <span key={g} className="px-3 py-1 bg-slate-50 border border-slate-100 text-slate-500 rounded-full text-xs font-medium">{g}</span>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20 text-slate-500 font-medium border-2 border-dashed border-slate-200 rounded-3xl">
+            Stay tuned for news about upcoming movies!
+          </div>
+        )}
       </div>
     </section>
   )
