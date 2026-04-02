@@ -1,23 +1,27 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
-import { Check } from 'lucide-react'
+import { Link, useNavigate, useLocation } from 'react-router'
+import { Check, Loader2 } from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
 import { setPersonalInfo, setPaymentMethod, setBookingId } from '../../store/bookingSlice'
 import { Button } from '../../shared/components/ui/Button'
 import { Input } from '../../shared/components/ui/Input'
 import MainLayout from '../../layout/main'
+import apiClient from '../../lib/api-client'
 
 export default function Payment() {
   const navigate = useNavigate()
+  const location = useLocation()
   const dispatch = useDispatch()
   const booking = useSelector((state) => state.booking)
+  
+  const orderId = location.state?.orderId
 
-  // Redirect to home if no booking data is present
+  // Redirect to home if no booking data is present or missing orderId
   React.useEffect(() => {
-    if (!booking.movie || !booking.cinema || booking.seats.length === 0) {
+    if (!booking.movie || !booking.cinema || booking.seats.length === 0 || !orderId) {
       navigate('/')
     }
-  }, [booking, navigate])
+  }, [booking, orderId, navigate])
 
   const [showModal, setShowModal] = useState(false)
   const [selectedPayment, setSelectedPayment] = useState(booking.paymentMethod || null)
@@ -30,15 +34,33 @@ export default function Payment() {
     phoneNumber: booking.personalInfo.phoneNumber || '81445687121'
   })
 
-  const handlePay = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handlePay = async () => {
     dispatch(setPersonalInfo(formData))
     dispatch(setPaymentMethod(selectedPayment))
     
-    // Generate a mock booking ID
-    const mockId = Math.random().toString().slice(2, 18)
-    dispatch(setBookingId(mockId))
-
-    setShowModal(true)
+    try {
+      setIsSubmitting(true)
+      const payload = {
+        full_name: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email,
+        phone_number: `${formData.phoneCode}${formData.phoneNumber}`,
+        payment_method: selectedPayment
+      }
+      
+      const response = await apiClient.post(`/orders/${orderId}/payment`, payload)
+      if (response.result) {
+        // We use the local orderId as booking tracking element 
+        dispatch(setBookingId(orderId))
+        setShowModal(true)
+      }
+    } catch (error) {
+      console.error("Payment failed", error)
+      alert(error.message || "Payment process failed. Ensure all fields are filled out correctly.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const { movie, cinema, date, time, seats, totalPrice, bookingId } = booking
@@ -197,9 +219,10 @@ export default function Payment() {
 
             <Button 
                onClick={handlePay}
-               disabled={!selectedPayment}
-               className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+               disabled={!selectedPayment || isSubmitting}
+               className="w-full h-14 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-2xl shadow-lg shadow-[#003049]/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
+               {isSubmitting && <Loader2 className="w-5 h-5 animate-spin" />}
                Pay your order
             </Button>
 
@@ -232,7 +255,7 @@ export default function Payment() {
                
                <div className="space-y-3">
                   <Button 
-                     onClick={() => navigate('/ticket')} 
+                     onClick={() => navigate('/ticket', { state: { orderId: orderId } })} 
                      className="w-full h-12 bg-[#003049] hover:bg-[#003049]/90 text-white font-bold rounded-xl shadow-lg shadow-[#003049]/30"
                   >
                      Check Payment
