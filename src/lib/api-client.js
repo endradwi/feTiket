@@ -1,6 +1,6 @@
 import { getCookie } from "./cookies";
 
-const BASE_URL = "http://localhost:8888";
+export const BASE_URL = "http://localhost:8888";
 
 async function apiClient(endpoint, { body, ...customConfig } = {}) {
   const headers = { "Content-Type": "application/json" };

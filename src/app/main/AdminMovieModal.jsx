@@ -1,32 +1,119 @@
-import React, { useState } from 'react'
-import { X, Upload, Calendar, Clock, Plus } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { X, Upload, Calendar, Clock, Plus, Loader2 } from 'lucide-react'
 import { Button } from '../../shared/components/ui/Button'
 import { Input } from '../../shared/components/ui/Input'
+import apiClient, { BASE_URL } from '../../lib/api-client'
+// import { format } from 'date-fns' // Removed to avoid build issues
 
 export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie }) {
+  const fileInputRef = useRef(null)
+  const [loading, setLoading] = useState(false)
+  const [metadata, setMetadata] = useState({
+    genres: [],
+    casters: [],
+    cinemas: []
+  })
+  
+  const [selectedFile, setSelectedFile] = useState(null)
+  const getImageUrl = (image) => {
+    if (!image) return null
+    if (image.startsWith('http')) return image
+    return `${BASE_URL}${image}`
+  }
+  const [previewUrl, setPreviewUrl] = useState(getImageUrl(editingMovie?.image))
+
   const [formData, setFormData] = useState({
     title: editingMovie?.title || '',
-    genres: editingMovie?.genres || [],
-    releaseDate: editingMovie?.releaseDate || '',
+    genre_ids: editingMovie?.genre_ids || [], // Assuming backend returns IDs too, which I updated GetMovieById to populate
+    caster_ids: editingMovie?.caster_ids || [],
+    cinema_ids: editingMovie?.cinema_ids || [],
+    released_at: editingMovie?.released_at ? new Date(editingMovie.released_at).toISOString().split('T')[0] : '',
     duration: editingMovie?.duration || '',
-    directedBy: editingMovie?.directedBy || '',
-    casts: editingMovie?.casts || '',
+    director_name: editingMovie?.director_name || '',
     synopsis: editingMovie?.synopsis || '',
-    image: editingMovie?.image || 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=500&auto=format&fit=crop',
-    location: editingMovie?.location || 'Purwokerto, Bandung, Bekasi',
-    showtimes: editingMovie?.showtimes || ['08:30am', '10:30pm']
+    recommendation: editingMovie?.recommendation || false
   })
+
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      try {
+        const [genres, casters, cinemas] = await Promise.all([
+          apiClient.get('/movies/genres'),
+          apiClient.get('/movies/casters'),
+          apiClient.get('/movies/cinemas')
+        ])
+        setMetadata({
+          genres: genres.result,
+          casters: casters.result,
+          cinemas: cinemas.result
+        })
+      } catch (err) {
+        console.error('Failed to fetch metadata:', err)
+      }
+    }
+    if (isOpen) fetchMetadata()
+  }, [isOpen])
 
   if (!isOpen) return null
 
-  const handleSubmit = (e) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      setSelectedFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => setPreviewUrl(reader.result)
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const toggleSelection = (field, id) => {
+    setFormData(prev => {
+      const current = prev[field]
+      if (current.includes(id)) {
+        return { ...prev, [field]: current.filter(item => item !== id) }
+      } else {
+        return { ...prev, [field]: [...current, id] }
+      }
+    })
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    onSave(formData)
+    setLoading(true)
+    try {
+      const data = new FormData()
+      data.append('title', formData.title)
+      data.append('released_at', formData.released_at ? new Date(formData.released_at).toISOString() : '')
+      data.append('duration', formData.duration)
+      data.append('director_name', formData.director_name)
+      data.append('synopsis', formData.synopsis)
+      data.append('recommendation', String(formData.recommendation))
+      
+      formData.genre_ids.forEach(id => data.append('genre_ids', String(id)))
+      formData.caster_ids.forEach(id => data.append('caster_ids', String(id)))
+      formData.cinema_ids.forEach(id => data.append('cinema_ids', String(id)))
+      
+      if (selectedFile) {
+        data.append('image', selectedFile)
+      }
+
+      if (editingMovie) {
+        await apiClient.patch(`/movies/${editingMovie.id}`, data)
+      } else {
+        await apiClient.post('/movies', data)
+      }
+      
+      onSave()
+    } catch (err) {
+      alert('Failed to save movie: ' + (err.message || 'Error occurred'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
+      <div className="bg-white rounded-3xl w-full max-w-5xl shadow-2xl relative animate-in fade-in zoom-in duration-200 my-8">
         {/* Header */}
         <div className="flex items-center justify-between p-8 border-b border-slate-100">
           <h2 className="text-2xl font-bold text-slate-800">{editingMovie ? 'Edit Movie' : 'Add New Movie'}</h2>
@@ -40,19 +127,41 @@ export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             {/* Left Column */}
             <div className="space-y-6">
-               <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-slate-50/50">
-                  <div className="w-16 h-16 rounded-full bg-[#5F2EEA]/10 flex items-center justify-center text-[#5F2EEA] mb-4">
-                     <Upload className="w-8 h-8" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-700 mb-2">Upload Image</p>
-                  <p className="text-xs text-slate-400 mb-6 max-w-[180px]">Drop your image here, or browse. JPEG, PNG are supported.</p>
-                  <Button type="button" className="bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-xl px-10">Browse</Button>
+               <div 
+                onClick={() => fileInputRef.current?.click()}
+                className="group relative border-2 border-dashed border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center text-center bg-slate-50/50 cursor-pointer hover:border-[#5F2EEA] hover:bg-[#5F2EEA]/5 transition-all"
+               >
+                  {previewUrl ? (
+                    <div className="w-full h-[200px] rounded-xl overflow-hidden relative">
+                      <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                        <Upload className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="w-16 h-16 rounded-full bg-[#5F2EEA]/10 flex items-center justify-center text-[#5F2EEA] mb-4">
+                        <Upload className="w-8 h-8" />
+                      </div>
+                      <p className="text-sm font-bold text-slate-700 mb-2">Upload Image</p>
+                      <p className="text-xs text-slate-400 mb-6 max-w-[180px]">Drop your image here, or browse. JPEG, PNG are supported.</p>
+                      <Button type="button" className="bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white rounded-xl px-10">Browse</Button>
+                    </>
+                  )}
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleFileChange} 
+                  />
                </div>
 
                <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-500 mb-2">Movie Name</label>
                     <Input 
+                        required
                         value={formData.title}
                         onChange={(e) => setFormData({...formData, title: e.target.value})}
                         placeholder="e.g. Spider-Man: Homecoming"
@@ -60,33 +169,45 @@ export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie 
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-slate-500 mb-2">Category (comma separated)</label>
-                    <Input 
-                        value={formData.genres.join(', ')}
-                        onChange={(e) => setFormData({...formData, genres: e.target.value.split(',').map(s => s.trim())})}
-                        placeholder="e.g. Action, Adventure, Sci-Fi"
-                        className="bg-slate-50 border-slate-200 h-12 rounded-xl"
-                    />
+                    <label className="block text-sm font-semibold text-slate-500 mb-2">Genres</label>
+                    <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-200">
+                      {metadata.genres.map(genre => (
+                        <button
+                          key={genre.id}
+                          type="button"
+                          onClick={() => toggleSelection('genre_ids', genre.id)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            formData.genre_ids.includes(genre.id)
+                              ? 'bg-[#5F2EEA] text-white shadow-md'
+                              : 'bg-white text-slate-400 border border-slate-200 hover:border-[#5F2EEA]'
+                          }`}
+                        >
+                          {genre.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-slate-500 mb-2">Release Date</label>
                       <div className="relative">
                         <Input 
-                            value={formData.releaseDate}
-                            onChange={(e) => setFormData({...formData, releaseDate: e.target.value})}
-                            placeholder="07/07/2023"
+                            type="date"
+                            value={formData.released_at}
+                            onChange={(e) => setFormData({...formData, released_at: e.target.value})}
                             className="bg-slate-50 border-slate-200 h-12 rounded-xl pl-10"
                         />
                         <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-500 mb-2">Duration (H/M)</label>
-                      <div className="flex gap-2">
-                        <Input placeholder="2" className="bg-slate-50 border-slate-200 h-12 rounded-xl text-center" />
-                        <Input placeholder="13" className="bg-slate-50 border-slate-200 h-12 rounded-xl text-center" />
-                      </div>
+                      <label className="block text-sm font-semibold text-slate-500 mb-2">Duration (e.g. 2h 13m)</label>
+                      <Input 
+                        value={formData.duration}
+                        onChange={(e) => setFormData({...formData, duration: e.target.value})}
+                        placeholder="2h 13m" 
+                        className="bg-slate-50 border-slate-200 h-12 rounded-xl" 
+                      />
                     </div>
                   </div>
                </div>
@@ -97,20 +218,30 @@ export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie 
                <div>
                   <label className="block text-sm font-semibold text-slate-500 mb-2">Director Name</label>
                   <Input 
-                      value={formData.directedBy}
-                      onChange={(e) => setFormData({...formData, directedBy: e.target.value})}
+                      value={formData.director_name}
+                      onChange={(e) => setFormData({...formData, director_name: e.target.value})}
                       placeholder="e.g. Jon Watts"
                       className="bg-slate-50 border-slate-200 h-12 rounded-xl"
                   />
                </div>
                <div>
-                  <label className="block text-sm font-semibold text-slate-500 mb-2">Cast</label>
-                  <Input 
-                      value={formData.casts}
-                      onChange={(e) => setFormData({...formData, casts: e.target.value})}
-                      placeholder="e.g. Tom Holland, Michael Keaton..."
-                      className="bg-slate-50 border-slate-200 h-12 rounded-xl"
-                  />
+                  <label className="block text-sm font-semibold text-slate-500 mb-2">Casters</label>
+                  <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-200">
+                    {metadata.casters.map(caster => (
+                      <button
+                        key={caster.id}
+                        type="button"
+                        onClick={() => toggleSelection('caster_ids', caster.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          formData.caster_ids.includes(caster.id)
+                            ? 'bg-[#5F2EEA] text-white shadow-md'
+                            : 'bg-white text-slate-400 border border-slate-200 hover:border-[#5F2EEA]'
+                        }`}
+                      >
+                        {caster.name}
+                      </button>
+                    ))}
+                  </div>
                </div>
                <div>
                   <label className="block text-sm font-semibold text-slate-500 mb-2">Synopsis</label>
@@ -123,36 +254,44 @@ export default function AdminMovieModal({ isOpen, onClose, onSave, editingMovie 
                   ></textarea>
                </div>
                <div>
-                  <label className="block text-sm font-semibold text-slate-500 mb-2">Add Location</label>
-                  <Input 
-                      value={formData.location}
-                      onChange={(e) => setFormData({...formData, location: e.target.value})}
-                      className="bg-slate-50 border-slate-200 h-12 rounded-xl"
-                  />
-               </div>
-               <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-500 mb-2">Set Date & Time</label>
-                  <div className="flex items-center gap-4">
-                     <div className="relative flex-1">
-                        <Input placeholder="Set a date" className="bg-slate-50 border-slate-200 h-10 rounded-xl pl-10 text-xs" />
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
-                     </div>
-                     <button type="button" className="w-10 h-10 rounded-xl border border-[#5F2EEA] text-[#5F2EEA] flex items-center justify-center hover:bg-[#5F2EEA]/10">
-                        <Plus className="w-5 h-5" />
-                     </button>
-                     <div className="flex gap-2">
-                        {formData.showtimes.map(time => (
-                           <div key={time} className="px-3 py-2 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-bold text-slate-600">{time}</div>
-                        ))}
-                     </div>
+                  <label className="block text-sm font-semibold text-slate-500 mb-2">Select Cinemas</label>
+                  <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-200">
+                    {metadata.cinemas.map(cinema => (
+                      <button
+                        key={cinema.id}
+                        type="button"
+                        onClick={() => toggleSelection('cinema_ids', cinema.id)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          formData.cinema_ids.includes(cinema.id)
+                            ? 'bg-[#5F2EEA] text-white shadow-md'
+                            : 'bg-white text-slate-400 border border-slate-200 hover:border-[#5F2EEA]'
+                        }`}
+                      >
+                        {cinema.cinema_name} ({cinema.location_name})
+                      </button>
+                    ))}
                   </div>
+               </div>
+               <div className="flex items-center gap-3">
+                  <input 
+                    type="checkbox" 
+                    id="recommendation"
+                    checked={formData.recommendation}
+                    onChange={(e) => setFormData({...formData, recommendation: e.target.checked})}
+                    className="w-5 h-5 accent-[#5F2EEA]"
+                  />
+                  <label htmlFor="recommendation" className="text-sm font-bold text-slate-700">Set as Recommendation</label>
                </div>
             </div>
           </div>
 
           <div className="mt-12 flex justify-end">
-             <Button type="submit" className="w-full lg:w-[300px] h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-xl shadow-[#5F2EEA]/30">
-                Save Movie
+             <Button 
+              type="submit" 
+              disabled={loading}
+              className="w-full lg:w-[300px] h-14 bg-[#5F2EEA] hover:bg-[#5F2EEA]/90 text-white font-bold rounded-2xl shadow-xl shadow-[#5F2EEA]/30 disabled:opacity-50"
+             >
+                {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : 'Save Movie'}
              </Button>
           </div>
         </form>
