@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { CalendarDays, Clock, MapPin, ChevronDown, Loader2 } from 'lucide-react'
 import { useDispatch } from 'react-redux'
@@ -51,64 +51,73 @@ export default function MovieDetail() {
   const [selectedTime, setSelectedTime] = useState('')
   const [selectedLocation, setSelectedLocation] = useState('')
   
-  const [filteredCinemas, setFilteredCinemas] = useState(DUMMY_DATA.cinemas)
+  const [availableLocations, setAvailableLocations] = useState([])
+  const [availableDates, setAvailableDates] = useState([])
+  const [availableTimes, setAvailableTimes] = useState([])
+  
+  const [filteredCinemas, setFilteredCinemas] = useState([])
+
+  const fetchMovieDetail = useCallback(async (params = {}) => {
+    try {
+      setLoading(true)
+      
+      // Build query string
+      const queryParams = new URLSearchParams()
+      if (params.location_id) queryParams.append('location_id', params.location_id)
+      if (params.date) queryParams.append('date', params.date)
+      if (params.time) queryParams.append('time', params.time)
+      
+      const url = `/movies/${id}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
+      const response = await apiClient.get(url)
+      const result = response.result
+      
+      if (result) {
+        // Map API fields to UI state
+        setMovie({
+          ...result,
+          posterImage: result.image,
+          bannerImage: result.image,
+          releaseDate: formatDate(result.released_at),
+          directedBy: result.director_name,
+          duration: formatDuration(result.duration),
+          casts: result.casters ? result.casters.join(", ") : result.caster_name,
+          genres: result.genres && result.genres.length > 0 ? result.genres : [result.genre_name]
+        })
+
+        setFilteredCinemas(result.cinemas || [])
+
+        // Extract available filters from initial or current results
+        if (result.cinemas) {
+          const locations = [...new Set(result.cinemas.map(c => c.location_name))].filter(Boolean)
+          const dates = [...new Set(result.cinemas.flatMap(c => c.showtimes?.map(s => s.show_date)))].filter(Boolean).sort()
+          const times = [...new Set(result.cinemas.flatMap(c => c.showtimes?.map(s => s.show_time)))].filter(Boolean).sort()
+          
+          if (availableLocations.length === 0) setAvailableLocations(locations)
+          if (availableDates.length === 0) setAvailableDates(dates)
+          if (availableTimes.length === 0) setAvailableTimes(times)
+        }
+      } else {
+        setError("Movie data not found.")
+      }
+    } catch (err) {
+      console.error("Failed to fetch movie details:", err)
+      setError("Movie not found or server error.")
+    } finally {
+      setLoading(false)
+    }
+  }, [id, availableLocations.length, availableDates.length, availableTimes.length])
 
   useEffect(() => {
-    const fetchMovieDetail = async () => {
-      try {
-        setLoading(true)
-        const response = await apiClient.get(`/movies/${id}`)
-        const result = response.result
-        
-        if (result) {
-          // Map API fields to UI state
-          setMovie({
-            ...result,
-            posterImage: result.image,
-            bannerImage: result.image, // Use same image for banner
-            releaseDate: formatDate(result.released_at),
-            directedBy: result.director_name,
-            duration: formatDuration(result.duration),
-            casts: result.casters ? result.casters.join(", ") : result.caster_name,
-            genres: result.genres && result.genres.length > 0 ? result.genres : [result.genre_name]
-          })
-        } else {
-          setError("Movie data not found.")
-        }
-      } catch (err) {
-        console.error("Failed to fetch movie details:", err)
-        setError("Movie not found or server error.")
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchMovieDetail()
     window.scrollTo(0, 0)
-  }, [id])
-
-  // Initial filter sync
-  useEffect(() => {
-    // Set initial values for selects if they are not already set
-    if (!selectedDate) setSelectedDate('21/07/28');
-    if (!selectedTime) setSelectedTime('08 : 30 AM');
-    if (!selectedLocation) setSelectedLocation('Purwokerto');
-    
-    // Only run handleFilter if selectedLocation has a value
-    if (selectedLocation) {
-      handleFilter();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLocation]); // Re-run when selectedLocation changes
-
-  useEffect(() => {
-   window.scrollTo(0, 0); 
-  }, [])
+  }, [fetchMovieDetail])
 
   const handleFilter = () => {
-    // filter cinemas by location
-    const result = DUMMY_DATA.cinemas.filter(c => c.location.toLowerCase() === selectedLocation.toLowerCase())
-    setFilteredCinemas(result.length > 0 ? result : [])
+    fetchMovieDetail({
+      location_id: selectedLocation,
+      date: selectedDate,
+      time: selectedTime
+    })
     setSelectedCinema(null)
   }
 
@@ -222,9 +231,9 @@ export default function MovieDetail() {
                       className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
                       <option value="">Select Date</option>
-                      <option value="21/07/28">21/07/28</option>
-                      <option value="22/07/28">22/07/28</option>
-                      <option value="23/07/28">23/07/28</option>
+                      {availableDates.map(date => (
+                        <option key={date} value={date}>{date}</option>
+                      ))}
                     </select>
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
                       <ChevronDown className="w-4 h-4" />
@@ -244,9 +253,9 @@ export default function MovieDetail() {
                       className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
                       <option value="">Select Time</option>
-                      <option value="08 : 30 AM">08 : 30 AM</option>
-                      <option value="10 : 30 AM">10 : 30 AM</option>
-                      <option value="12 : 30 PM">12 : 30 PM</option>
+                      {availableTimes.map(time => (
+                        <option key={time} value={time}>{time}</option>
+                      ))}
                     </select>
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
                       <ChevronDown className="w-4 h-4" />
@@ -266,9 +275,9 @@ export default function MovieDetail() {
                       className="w-full h-12 pl-10 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#003049]/20"
                     >
                       <option value="">Select Location</option>
-                      <option value="Purwokerto">Purwokerto</option>
-                      <option value="Jakarta">Jakarta</option>
-                      <option value="Bandung">Bandung</option>
+                      {availableLocations.map(loc => (
+                        <option key={loc} value={loc}>{loc}</option>
+                      ))}
                     </select>
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
                       <ChevronDown className="w-4 h-4" />
@@ -293,21 +302,21 @@ export default function MovieDetail() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                 {filteredCinemas.length > 0 ? (
                   filteredCinemas.map((cinema, idx) => (
-                  <div 
-                    key={`${cinema.id}-${idx}`}
-                    onClick={() => setSelectedCinema(cinema.id)}
-                    className={`cursor-pointer rounded-2xl border flex items-center justify-center p-6 h-24 transition-all ${
-                      selectedCinema === cinema.id 
-                        ? 'bg-[#003049] border-[#003049] shadow-md' 
-                        : 'bg-white border-slate-200 hover:border-[#003049]/50 hover:bg-slate-50'
-                    }`}
-                  >
-                    <img 
-                      src={cinema.logo} 
-                      alt={cinema.name} 
-                      className={`h-8 object-contain ${selectedCinema === cinema.id ? 'brightness-0 invert' : ''}`}
-                    />
-                  </div>
+                    <div 
+                      key={`${cinema.cinema_id}-${idx}`}
+                      onClick={() => setSelectedCinema(cinema.cinema_id)}
+                      className={`cursor-pointer rounded-2xl border flex items-center justify-center p-6 h-24 transition-all ${
+                        selectedCinema === cinema.cinema_id 
+                          ? 'bg-[#003049] border-[#003049] shadow-md' 
+                          : 'bg-white border-slate-200 hover:border-[#003049]/50 hover:bg-slate-50'
+                      }`}
+                    >
+                      <img 
+                        src={cinema.cinema_image} 
+                        alt={cinema.cinema_name} 
+                        className={`h-8 object-contain ${selectedCinema === cinema.cinema_id ? 'brightness-0 invert' : ''}`}
+                      />
+                    </div>
                 ))
               ) : (
                 <div className="col-span-full py-6 text-center text-slate-500 font-medium">
@@ -328,11 +337,16 @@ export default function MovieDetail() {
               <div className="flex justify-center max-w-sm mx-auto">
                 <Button 
                   onClick={() => {
-                    const c = DUMMY_DATA.cinemas.find(ci => ci.id === selectedCinema)
+                    const c = filteredCinemas.find(ci => ci.cinema_id === selectedCinema)
                     if (selectedDate && selectedTime && c) {
                       dispatch(setBookingDetails({
                         movie: movie,
-                        cinema: c,
+                        cinema: {
+                          ...c,
+                          id: c.cinema_id,
+                          name: c.cinema_name,
+                          logo: c.cinema_image
+                        },
                         date: selectedDate,
                         time: selectedTime
                       }))
