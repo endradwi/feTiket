@@ -1,6 +1,6 @@
 import { getCookie } from "./cookies";
 
-export const BASE_URL = "http://localhost:8888";
+export const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8888";
 
 async function apiClient(endpoint, { body, ...customConfig } = {}) {
   const headers = { "Content-Type": "application/json" };
